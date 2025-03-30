@@ -1,0 +1,229 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal Office</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{% static 'css/personal_office.css' %}" />
+    <style>
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        animation: fadeIn 0.3s ease;
+        position: relative;
+      }
+
+      .close-btn {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        cursor: pointer;
+      }
+
+      .close-btn:hover,
+      .close-btn:focus {
+        color: black;
+        text-decoration: none;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .avatar-container img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    </style>
+  </head>
+  <body>
+    {% include 'components/header.html' %}
+
+    <div class="container">
+      <div class="card">
+        <div class="avatar-container">
+          <img src="{% if user_details.avatar %}{{ user_details.avatar.url }}{% else %}{% static 'images/placeholder.png' %}{% endif %}" alt="User Avatar" />
+        </div>
+        <div class="details">
+          <h2 class="user">
+            <strong>{{ user_details.user.username }}</strong>
+          </h2>
+          <p><strong>Gender:</strong> {{ user_details.get_gender_display }}</p>
+          <p><strong>Height:</strong> {{ user_details.height }} cm</p>
+          <p><strong>Weight:</strong> {{ user_details.weight }} kg</p>
+          <p><strong>Age:</strong> {{ age }}</p>
+          <p><strong>Goal:</strong> {{ user_details.get_goal_display }}</p>
+          <p><strong>Training level:</strong> {{ user_details.get_training_level_display }}</p>
+          <button class="edit-btn" id="editBtn">Edit</button>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <h2 style="text-align: center">Weight Graph</h2>
+        <canvas id="weightChart"></canvas>
+      </div>
+    </div>
+
+    <div id="editModal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn" id="closeBtn">&times;</span>
+        <h2>Edit your details</h2>
+        <form
+          method="POST"
+          action="{% url 'update_user_info' user_details.user.id %}"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="id_height">Height (cm):</label>
+            <input
+              type="number"
+              name="height"
+              value="{{ user_details.height }}"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="id_weight">Weight (kg):</label>
+            <input
+              type="number"
+              name="weight"
+              value="{{ user_details.weight }}"
+              step="0.01"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="id_goal">Goal:</label>
+            <select name="goal" id="id_goal" required>
+              <option value="lose-weight" {% if user_details.goal == "lose-weight" %}selected{% endif %}>
+                Lose Weight
+              </option>
+              <option value="maintain" {% if user_details.goal == "maintain" %}selected{% endif %}>
+                Maintain Weight
+              </option>
+              <option value="gain-muscle" {% if user_details.goal == "gain-muscle" %}selected{% endif %}>
+                Gain Muscle
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="id_training_level">Training level:</label>
+            <select name="training_level" id="id_training_level" required>
+              <option value="beginner" {% if user_details.training_level == "beginner" %}selected{% endif %}>
+                Beginner
+              </option>
+              <option value="intermediate" {% if user_details.training_level == "intermediate" %}selected{% endif %}>
+                Intermediate
+              </option>
+              <option value="advanced" {% if user_details.training_level == "advanced" %}selected{% endif %}>
+                Advanced
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="id_avatar">Avatar:</label>
+            <input type="file" name="avatar" />
+          </div>
+          <button type="submit" class="save-btn">Save changes</button>
+        </form>
+      </div>
+    </div>
+
+    {% include 'components/footer.html' %}
+    
+    <script>
+      const editBtn = document.getElementById('editBtn');
+      const modal = document.getElementById('editModal');
+      const closeBtn = document.getElementById('closeBtn');
+
+      editBtn.onclick = function () {
+        modal.style.display = 'flex';
+      };
+
+      closeBtn.onclick = function () {
+        modal.style.display = 'none';
+      };
+
+      window.onclick = function (event) {
+        if (event.target === modal) {
+          modal.style.display = 'none';
+        }
+      };
+
+      const ctx = document.getElementById('weightChart').getContext('2d');
+      const weightChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: {{ labels|safe }},
+          datasets: [
+            {
+              label: 'Weight (kg)',
+              data: {{ weights|safe }},
+              borderColor: '#9b957e',
+              backgroundColor: 'rgba(155, 149, 126, 0.2)',
+              borderWidth: 2,
+              fill: true,
+              pointRadius: 5,
+              pointBackgroundColor: '#9b957e',
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: {
+                color: '#333',
+              },
+            },
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { display: false },
+            },
+            y: {
+              beginAtZero: false,
+              grid: { color: '#ddd' },
+              ticks: { color: '#333' },
+            },
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeFit</title>
+    <link rel="stylesheet" href="{% static 'css/main_page.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">VIBE<span>FIT</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'main' %}">
+                    <h2>Home</h2>
+                </a></li>
+                <li><a href="">
+                    <h2>About Us</h2>
+                </a></li>
+                <li><a href="">
+                    <h2>Contact Us</h2>
+                </a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="hero">
+            <div class="hero-left">
+                <h1 class="slogan">Achieve the Best, <br> Forget the Rest</h1>
+                <p>
+                    <h3>VibeFit helps you achieve your fitness goals with personalized workout and nutrition plans.
+                        Everything you need—all in one place!</h3>
+                </p>
+                <a href="{% url 'register' %}" class="btn"><button class="cta-button">
+                        <h2>Start Now</h2>
+                    </button></a>
+            </div>
+            <div class="hero-right">
+                <a href="{% url 'register' %}" class="btn"><img src="{% static 'img/main_page.jpg' %}"
+                        alt="Fitness"></a>
+            </div>
+        </div>
+    </main>
+
+    {% include 'components/footer.html' %}
+</body>
+
+</html>

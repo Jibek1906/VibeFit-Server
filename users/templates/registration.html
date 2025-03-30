@@ -1,0 +1,128 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration Page</title>
+    <link rel="stylesheet" href="{% static 'css/registration.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="page-container">
+      <div class="registration-container">
+        <div class="registration-image">
+          <img
+            src="{% static 'img/registration.jpg' %}"
+            alt="Registration Image"
+          />
+        </div>
+        <div class="form-container">
+          <h1>Build Your Perfect Body</h1>
+
+          <form method="post" id="registrationForm">
+            {% csrf_token %} {% for field in form %}
+            <div class="form-field">
+              {% if field.name == "password" or field.name == "password2" %}
+              <div class="password-field">{{ field }}</div>
+              {% else %} {{ field }} {% endif %}
+              <div class="error-messages" id="error-{{ field.name }}"></div>
+            </div>
+            {% endfor %}
+
+            <button class="cta-button" type="submit">Sign Up</button>
+          </form>
+
+          <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="hidden"></div>
+
+    <script>
+      function togglePassword(element) {
+        const input = element.previousElementSibling;
+        input.type = input.type === "password" ? "text" : "password";
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const emailInput = document.querySelector('input[name="email"]');
+        const password1 = document.querySelector('input[name="password"]');
+        const password2 = document.querySelector('input[name="password2"]');
+        const form = document.getElementById("registrationForm");
+
+        function showError(fieldName, message) {
+          const errorDiv = document.getElementById("error-" + fieldName);
+          errorDiv.textContent = message;
+          errorDiv.style.display = "block";
+          showToast(message);
+        }
+
+        function clearError(fieldName) {
+          const errorDiv = document.getElementById("error-" + fieldName);
+          errorDiv.textContent = "";
+          errorDiv.style.display = "none";
+        }
+
+        function showToast(message) {
+          const toast = document.getElementById("toast");
+          toast.textContent = message;
+          toast.classList.remove("hidden");
+          setTimeout(() => {
+            toast.classList.add("hidden");
+          }, 3000);
+        }
+
+        emailInput.addEventListener("input", function () {
+          const email = emailInput.value;
+
+          if (email.length > 3) {
+            fetch(`/users/check-email/?email=${email}`)
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.error) {
+                  showError("email", data.error);
+                } else {
+                  clearError("email");
+                }
+              })
+              .catch((error) => console.error("Ошибка:", error));
+          }
+        });
+
+        password1.addEventListener("input", function () {
+          if (password1.value.length < 8) {
+            showError("password", "Password must be at least 8 characters.");
+          } else if (!/\d/.test(password1.value)) {
+            showError("password", "Password must contain at least one number.");
+          } else {
+            clearError("password");
+          }
+        });
+
+        password2.addEventListener("input", function () {
+          if (password2.value !== password1.value) {
+            showError("password2", "Passwords do not match.");
+          } else {
+            clearError("password2");
+          }
+        });
+
+        form.addEventListener("submit", function (event) {
+          if (
+            password1.value.length < 8 ||
+            !/\d/.test(password1.value) ||
+            password2.value !== password1.value
+          ) {
+            event.preventDefault();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
