@@ -1023,11 +1023,16 @@
         }
       }
 
+      // Обновленная функция для работы с водой
       async function updateWaterIntake(amount) {
         const dateStr = formatDateForAPI(currentDate);
         const currentAmount =
           parseInt(document.getElementById("water-intake").textContent) || 0;
-        const newAmount = Math.max(0, currentAmount + amount);
+        let newAmount = currentAmount + amount;
+
+        // Гарантируем корректные значения
+        newAmount = Math.max(0, newAmount);
+        if (newAmount === currentAmount) return;
 
         try {
           const response = await fetch("/nutrition/api/update-water-intake/", {
@@ -1044,13 +1049,69 @@
 
           if (!response.ok) throw new Error("Failed to update water intake");
 
-          updateWaterIntakeDisplay(newAmount);
+          const data = await response.json();
+          if (data.status === "success") {
+            updateWaterIntakeDisplay(data.water_intake);
+          }
         } catch (error) {
           console.error("Error updating water intake:", error);
-          alert("Error updating water intake: " + error.message);
         }
       }
 
+      // Обновленная функция отображения воды
+      function updateWaterIntakeDisplay(amount) {
+        amount = amount || 0; // Гарантируем что не будет undefined/null
+        const waterGoal =
+          parseInt(document.querySelector("#water-progress").max) || 1;
+        const remaining = Math.max(0, waterGoal - amount);
+
+        document.getElementById("water-intake").textContent = `${amount} ml`;
+        document.getElementById(
+          "water-remaining"
+        ).textContent = `${remaining} ml remaining`;
+        document.getElementById("water-progress").value = amount;
+      }
+
+      // В функции loadDailyData обновите обработку воды:
+      async function loadDailyData() {
+        const dateStr = formatDateForAPI(currentDate);
+
+        try {
+          const response = await fetch(
+            `/nutrition/api/get-daily-nutrition/?date=${dateStr}`
+          );
+          if (!response.ok) throw new Error("Failed to load daily data");
+
+          const data = await response.json();
+
+          if (data.status === "success") {
+            // Гарантированно корректное отображение воды
+            updateWaterIntakeDisplay(data.water_intake);
+
+            // Остальной код обработки данных...
+          }
+        } catch (error) {
+          console.error("Error loading daily data:", error);
+        }
+      }
+
+      // Инициализация при загрузке страницы
+      document.addEventListener("DOMContentLoaded", function () {
+        // Инициализируем воду нулевым значением
+        updateWaterIntakeDisplay(0);
+
+        // Обработчики для кнопок воды
+        document.querySelectorAll(".water-buttons button").forEach((button) => {
+          button.addEventListener("click", function () {
+            const amount = parseInt(this.textContent.replace(/\D/g, "")) || 0;
+            if (this.textContent.includes("-")) {
+              updateWaterIntake(-amount);
+            } else {
+              updateWaterIntake(amount);
+            }
+          });
+        });
+      });
       document.addEventListener("DOMContentLoaded", init);
     </script>
   </body>

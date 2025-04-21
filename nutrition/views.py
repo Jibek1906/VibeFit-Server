@@ -6,8 +6,8 @@ from .models import DailyNutrition, Meal
 from users.models import UserDetails
 import json
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ValidationError
 
-@login_required
 def calculate_daily_calories(user_details):
     age = (datetime.now().date() - user_details.birth_date).days // 365 if user_details.birth_date else 30
     weight = float(user_details.weight)
@@ -26,6 +26,7 @@ def calculate_daily_calories(user_details):
         'intermediate': 1.375,
         'advanced': 1.55
     }
+
     activity_multiplier = activity_multipliers.get(training_level, 1.2)
     tdee = bmr * activity_multiplier
 
@@ -86,7 +87,7 @@ def nutrition_view(request):
             daily_nutrition.goal_fats != calculated['fats'] or
             daily_nutrition.goal_carbs != calculated['carbs']
         )
-        
+
         if needs_update:
             daily_nutrition.goal_calories = calculated['calories']
             daily_nutrition.goal_proteins = calculated['proteins']
@@ -95,11 +96,11 @@ def nutrition_view(request):
             daily_nutrition.save()
 
     meals = Meal.objects.filter(nutrition=daily_nutrition).order_by('meal_type')
-    
+
     context = {
         'daily_nutrition': daily_nutrition,
         'meals': meals,
-        'water_goal': round(float(user_details.weight) * 35)
+        'water_goal': calculated['water_intake']
     }
     return render(request, 'nutrition.html', context)
 
@@ -111,7 +112,7 @@ def api_save_meal(request):
             data = json.loads(request.body)
             user_details = UserDetails.objects.get(user=request.user)
             date = datetime.strptime(data['date'], '%Y-%m-%d').date()
-            
+
             daily_nutrition, created = DailyNutrition.objects.get_or_create(
                 user=user_details,
                 date=date,
@@ -120,6 +121,7 @@ def api_save_meal(request):
                     'proteins': 0,
                     'fats': 0,
                     'carbs': 0,
+                    'water_intake': 0,
                     **calculate_daily_calories(user_details)
                 }
             )
@@ -145,6 +147,7 @@ def api_save_meal(request):
                 'message': 'Meal saved successfully',
                 'meal_id': meal.id
             })
+
         except Exception as e:
             return JsonResponse({
                 'status': 'error',
@@ -157,34 +160,23 @@ def api_save_meal(request):
 
 @login_required
 @csrf_exempt
-def api_update_goals(request):
-    if request.method == 'POST':
+def api_delete_meal(request, meal_id):
+    if request.method == 'DELETE':
         try:
-            user_details = UserDetails.objects.get(user=request.user)
-            today = datetime.now().date()
-            
-            daily_nutrition, created = DailyNutrition.objects.get_or_create(
-                user=user_details,
-                date=today,
-                defaults={
-                    'calories': 0,
-                    'proteins': 0,
-                    'fats': 0,
-                    'carbs': 0
-                }
-            )
-            
-            calculated = calculate_daily_calories(user_details)
-            daily_nutrition.goal_calories = calculated['calories']
-            daily_nutrition.goal_proteins = calculated['proteins']
-            daily_nutrition.goal_fats = calculated['fats']
-            daily_nutrition.goal_carbs = calculated['carbs']
+            meal = Meal.objects.get(id=meal_id, nutrition__user__user=request.user)
+            daily_nutrition = meal.nutrition
+
+            daily_nutrition.calories -= meal.calories
+            daily_nutrition.proteins -= meal.proteins
+            daily_nutrition.fats -= meal.fats
+            daily_nutrition.carbs -= meal.carbs
             daily_nutrition.save()
-            
+
+            meal.delete()
+
             return JsonResponse({
                 'status': 'success',
-                'message': 'Goals updated successfully',
-                'goals': calculated
+                'message': 'Meal deleted successfully'
             })
         except Exception as e:
             return JsonResponse({
@@ -203,25 +195,33 @@ def api_update_water_intake(request):
         try:
             data = json.loads(request.body)
             user_details = UserDetails.objects.get(user=request.user)
-            date = datetime.strptime(data['date'], '%Y-%m-%d').date()
+            date_str = data.get('date', datetime.now().date().strftime('%Y-%m-%d'))
+            date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            
+            amount = int(data.get('amount', 0))
+            if amount < 0:
+                return JsonResponse({
+                    'status': 'error',
+                    'error': 'Amount cannot be negative'
+                }, status=400)
 
             daily_nutrition, created = DailyNutrition.objects.get_or_create(
                 user=user_details,
                 date=date,
                 defaults={
-                    'water_intake': data['amount'],
+                    'water_intake': 0,
                     **calculate_daily_calories(user_details)
                 }
             )
 
-            if not created:
-                daily_nutrition.water_intake = data['amount']
-                daily_nutrition.save()
+            daily_nutrition.water_intake = amount
+            daily_nutrition.save()
 
             return JsonResponse({
                 'status': 'success',
                 'water_intake': daily_nutrition.water_intake
             })
+            
         except Exception as e:
             return JsonResponse({
                 'status': 'error',
@@ -241,20 +241,26 @@ def api_get_daily_nutrition(request):
             date_str = request.GET.get('date', datetime.now().date().strftime('%Y-%m-%d'))
             date = datetime.strptime(date_str, '%Y-%m-%d').date()
             
+            calculated = calculate_daily_calories(user_details)
+
             daily_nutrition, created = DailyNutrition.objects.get_or_create(
                 user=user_details,
                 date=date,
                 defaults={
-                    **calculate_daily_calories(user_details),
                     'calories': 0,
                     'proteins': 0,
                     'fats': 0,
-                    'carbs': 0
+                    'carbs': 0,
+                    'goal_calories': calculated['calories'],
+                    'goal_proteins': calculated['proteins'],
+                    'goal_fats': calculated['fats'],
+                    'goal_carbs': calculated['carbs'],
+                    'water_intake': 0
                 }
             )
-            
+
             meals = Meal.objects.filter(nutrition=daily_nutrition).order_by('meal_type')
-            
+
             return JsonResponse({
                 'status': 'success',
                 'date': date_str,
@@ -277,36 +283,6 @@ def api_get_daily_nutrition(request):
                     'carbs': meal.carbs,
                     'created_at': meal.created_at.strftime('%H:%M')
                 } for meal in meals]
-            })
-        except Exception as e:
-            return JsonResponse({
-                'status': 'error',
-                'error': str(e)
-            }, status=400)
-    return JsonResponse({
-        'status': 'error',
-        'error': 'Invalid request method'
-    }, status=405)
-
-@login_required
-@csrf_exempt
-def api_delete_meal(request, meal_id):
-    if request.method == 'DELETE':
-        try:
-            meal = Meal.objects.get(id=meal_id, nutrition__user__user=request.user)
-            daily_nutrition = meal.nutrition
-            
-            daily_nutrition.calories -= meal.calories
-            daily_nutrition.proteins -= meal.proteins
-            daily_nutrition.fats -= meal.fats
-            daily_nutrition.carbs -= meal.carbs
-            daily_nutrition.save()
-            
-            meal.delete()
-            
-            return JsonResponse({
-                'status': 'success',
-                'message': 'Meal deleted successfully'
             })
         except Exception as e:
             return JsonResponse({

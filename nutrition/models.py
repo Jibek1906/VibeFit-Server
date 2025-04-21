@@ -13,7 +13,11 @@ class DailyNutrition(models.Model):
     goal_proteins = models.PositiveIntegerField(default=0)
     goal_fats = models.PositiveIntegerField(default=0)
     goal_carbs = models.PositiveIntegerField(default=0)
-    water_intake = models.PositiveIntegerField(default=0, help_text="In milliliters")
+    water_intake = models.PositiveIntegerField(
+        default=0,
+        validators=[MinValueValidator(0)],
+        help_text="In milliliters"
+    )
 
     class Meta:
         unique_together = ('user', 'date')
@@ -22,15 +26,11 @@ class DailyNutrition(models.Model):
         ordering = ['-date']
 
     def __str__(self):
-        return f"{self.user.user.username} - {self.date} - {self.calories}/{self.goal_calories}"
+        return f"{self.user.user.username} - {self.date}"
 
     @property
     def remaining_calories(self):
-        return self.goal_calories - self.calories
-
-    @property
-    def is_calorie_deficit(self):
-        return self.remaining_calories >= 0
+        return max(0, self.goal_calories - self.calories)
 
     @property
     def progress_percentage(self):
@@ -63,7 +63,7 @@ class Meal(models.Model):
         ('dinner', 'Dinner'),
         ('snacks', 'Snacks'),
     )
-
+    
     nutrition = models.ForeignKey(DailyNutrition, on_delete=models.CASCADE, related_name='meals')
     meal_type = models.CharField(max_length=20, choices=MEAL_TYPES)
     name = models.CharField(max_length=100)
@@ -75,7 +75,7 @@ class Meal(models.Model):
     notes = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.name} ({self.calories} kcal)"
+        return f"{self.meal_type}: {self.name}"
 
     class Meta:
         ordering = ['created_at']

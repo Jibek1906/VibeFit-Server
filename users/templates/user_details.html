@@ -1,36 +1,246 @@
 {% load static %}
-
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Details Page</title>
-    <link rel="stylesheet" href="{% static 'css/user_details.css' %}" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Baloo&display=swap"
-      rel="stylesheet"
-    />
-  </head>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
 
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Arial", sans-serif;
+        background-color: #f4f4f4;
+        font-size: 16px;
+      }
+
+      .page-container {
+        position: relative;
+        min-height: 100vh;
+        padding: 60px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1;
+      }
+
+      .page-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: url("{% static 'img/background.jpg' %}") no-repeat center
+          center/cover;
+        filter: blur(10px);
+        z-index: -1;
+      }
+
+      .registration-container {
+        width: 100%;
+        max-width: 600px;
+        background-color: rgba(255, 255, 255);
+        border-radius: 30px;
+        padding: 40px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .form-container {
+        width: 100%;
+        text-align: center;
+      }
+
+      .form-container h1 {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 25px;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .form-field {
+        margin-bottom: 15px;
+        width: 100%;
+      }
+
+      .form-field label {
+        display: block;
+        margin-bottom: 5px;
+        color: #444;
+        font-size: 14px;
+        padding-left: 10px;
+      }
+
+      .form-field input,
+      .form-field select {
+        width: 100%;
+        padding: 20px;
+        font-size: 16px;
+        border-radius: 30px;
+        border: 1px solid #ccc;
+        background: #ebeade;
+        color: #333;
+        text-align: left;
+        transition: all 0.2s ease;
+      }
+
+      .form-field input:focus,
+      .form-field select:focus {
+        border-color: #4285f4;
+        outline: none;
+        background: #fff;
+      }
+
+      input::placeholder {
+        color: #888;
+        text-align: left;
+        font-size: 16px;
+      }
+
+      select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 15px;
+      }
+
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      input[type="number"] {
+        -moz-appearance: textfield;
+        appearance: none;
+      }
+
+      .save-button {
+        width: 100%;
+        padding: 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 30px;
+        background-color: #538558;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .save-button:hover {
+        background-color: #bebbae;
+      }
+
+      .error-messages p {
+        color: red;
+        font-size: 12px;
+        margin: 5px 0;
+      }
+
+      .save-button {
+        margin-top: 20px;
+        width: 100%;
+        padding: 25px;
+        margin-top: 20px;
+        border: none;
+        border-radius: 30px;
+        background-color: #538558;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+    </style>
+  </head>
   <body>
     <div class="page-container">
-      <div class="form-container">
-        <h1>Fill out your details to get <br />your personalized plan</h1>
-        <form method="post" enctype="multipart/form-data">
-          {% csrf_token %} {% for field in form %}
-          <div class="form-field">
-            {{ field.label_tag }} {{ field }} {% if field.errors %}
-            <div class="error-messages">
-              {% for error in field.errors %}
-              <p>{{ error }}</p>
-              {% endfor %}
+      <div class="registration-container">
+        <div class="form-container">
+          <h1>Fill out your details to get<br />your personalized plan</h1>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-field">
+              <label for="{{ form.gender.id_for_label }}">Gender</label>
+              {{ form.gender }} {% if form.gender.errors %}
+              <div class="error-messages">
+                {% for error in form.gender.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+              {% endif %}
             </div>
-            {% endif %}
-          </div>
-          {% endfor %}
-          <button type="submit" class="save-button">Save</button>
-        </form>
+
+            <div class="form-field">
+              <label for="{{ form.height.id_for_label }}">Height (cm)</label>
+              {{ form.height }} {% if form.height.errors %}
+              <div class="error-messages">
+                {% for error in form.height.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="form-field">
+              <label for="{{ form.weight.id_for_label }}">Weight (kg)</label>
+              {{ form.weight }} {% if form.weight.errors %}
+              <div class="error-messages">
+                {% for error in form.weight.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="form-field">
+              <label for="{{ form.goal.id_for_label }}">Goal</label>
+              {{ form.goal }} {% if form.goal.errors %}
+              <div class="error-messages">
+                {% for error in form.goal.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="form-field">
+              <label for="{{ form.training_level.id_for_label }}"
+                >Training Level</label
+              >
+              {{ form.training_level }} {% if form.training_level.errors %}
+              <div class="error-messages">
+                {% for error in form.training_level.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="form-field">
+              <label for="{{ form.birth_date.id_for_label }}">Birth Date</label>
+              {{ form.birth_date }} {% if form.birth_date.errors %}
+              <div class="error-messages">
+                {% for error in form.birth_date.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+
+            <button type="submit" class="save-button">Save Details</button>
+          </form>
+        </div>
       </div>
     </div>
   </body>

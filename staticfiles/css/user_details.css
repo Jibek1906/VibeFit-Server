@@ -1,0 +1,183 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+}
+
+.page-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("../img/registration.jpg");
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px);
+    z-index: -1;
+}
+
+.registration-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.registration-image {
+    flex: 1;
+    max-width: 50%;
+    margin-right: 20px;
+}
+
+.registration-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 30px;
+}
+
+.form-container {
+    flex: 1;
+    max-width: 40%;
+    text-align: center;
+    padding-right: 50px;
+}
+
+.form-container h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+form input, form select {
+    width: 100%;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 30px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    background-color: #EBEADE;
+    box-sizing: border-box;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+form select {
+    -webkit-appearance: auto;
+    -moz-appearance: none;
+    appearance: auto;
+    text-align: center;
+}
+
+button {
+    width: 100%;
+    padding: 25px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 30px;
+    background-color: #538558;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #bebbae;
+}
+
+p a {
+    color: #000000;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+p a:hover {
+    color: #A19C84;
+    text-decoration: none;
+}
+
+.error-messages {
+    color: red;
+    font-size: 12px;
+    padding: 5px;
+    margin-top: 5px;
+}
+
+.password-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .password-field input {
+    width: 100%;
+    padding-right: 30px;
+  }
+  
+  .toggle-password {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #333;
+    z-index: 2;
+  }
+  
+  .toggle-password:hover {
+    color: #007BFF;
+  }
+  
+input[type="password"] {
+    padding-right: 40px;
+}
+
+.error-message {
+    background-color: #f44336;
+    color: white;
+    padding: 15px;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 5px;
+    width: 90%;
+    max-width: 400px;
+    display: none;
+    font-size: 16px;
+    z-index: 1000;
+}
+
+input[type="text"], input[type="email"], input[type="password"] {
+    color: #333;
+}
