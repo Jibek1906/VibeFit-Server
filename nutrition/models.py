@@ -18,7 +18,7 @@ class DailyNutrition(models.Model):
         validators=[MinValueValidator(0)],
         help_text="In milliliters"
     )
-
+    
     class Meta:
         unique_together = ('user', 'date')
         verbose_name = 'Daily Nutrition'
@@ -26,11 +26,15 @@ class DailyNutrition(models.Model):
         ordering = ['-date']
 
     def __str__(self):
-        return f"{self.user.user.username} - {self.date}"
+        return f"{self.user.user.username} - {self.date} - {self.calories}/{self.goal_calories}"
 
     @property
     def remaining_calories(self):
-        return max(0, self.goal_calories - self.calories)
+        return self.goal_calories - self.calories
+
+    @property
+    def is_calorie_deficit(self):
+        return self.remaining_calories >= 0
 
     @property
     def progress_percentage(self):
@@ -63,7 +67,7 @@ class Meal(models.Model):
         ('dinner', 'Dinner'),
         ('snacks', 'Snacks'),
     )
-    
+
     nutrition = models.ForeignKey(DailyNutrition, on_delete=models.CASCADE, related_name='meals')
     meal_type = models.CharField(max_length=20, choices=MEAL_TYPES)
     name = models.CharField(max_length=100)
@@ -75,7 +79,7 @@ class Meal(models.Model):
     notes = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.meal_type}: {self.name}"
+        return f"{self.name} ({self.calories} kcal)"
 
     class Meta:
         ordering = ['created_at']
