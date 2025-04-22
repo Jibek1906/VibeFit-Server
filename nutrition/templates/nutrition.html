@@ -298,6 +298,7 @@
         background: #138496;
       }
 
+      /* Стили для модального окна добавления еды */
       .modal {
         display: none;
         position: fixed;
@@ -981,11 +982,9 @@
 
           if (!response.ok) throw new Error("Failed to save meal");
 
-          // Close modal and refresh data
           mealModal.style.display = "none";
           loadDailyData();
 
-          // Reset form
           document.getElementById("meal-name").value = "";
           document.getElementById("meal-calories").value = "";
           document.getElementById("meal-proteins").value = "";
@@ -1015,7 +1014,6 @@
 
           if (!response.ok) throw new Error("Failed to delete meal");
 
-          // Refresh data
           loadDailyData();
         } catch (error) {
           console.error("Error deleting meal:", error);
@@ -1044,7 +1042,7 @@
 
           const data = await response.json();
           if (data.status === "success") {
-            updateWaterDisplay(data.water_intake);
+            updateWaterIntakeDisplay(data.water_intake);
           }
         } catch (error) {
           console.error("Error updating water:", error);
