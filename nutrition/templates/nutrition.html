@@ -11,6 +11,167 @@
     />
     <title>Calories Counter</title>
     <style>
+      .modal-content {
+        width: 90%;
+        max-width: 500px;
+        padding: 25px;
+      }
+
+      .nutrition-inputs {
+        display: flex;
+        gap: 20px;
+        margin: 15px 0;
+      }
+
+      .nutrition-base,
+      .nutrition-calculated {
+        flex: 1;
+        background: #f5f5f5;
+        padding: 15px;
+        border-radius: 8px;
+      }
+
+      .nutrition-inputs h3 {
+        margin-top: 0;
+        font-size: 16px;
+        color: #333;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 8px;
+      }
+
+      .input-group {
+        margin-bottom: 10px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      .calculated-values {
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
+      .calculated-values div {
+        margin-bottom: 5px;
+      }
+
+      .calculated-values span {
+        font-weight: 500;
+      }
+
+      .search-results {
+        max-height: 150px;
+        overflow-y: auto;
+        margin: 5px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        display: none;
+      }
+
+      .search-result-item {
+        padding: 8px 12px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+      }
+
+      .search-result-item:hover {
+        background-color: #f0f0f0;
+      }
+
+      .search-result-item strong {
+        color: #538558;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .form-actions button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+      }
+
+      #save-meal {
+        background-color: #538558;
+        color: white;
+      }
+
+      #close-modal {
+        background-color: #f0f0f0;
+        color: #333;
+      }
+
+      .search-container {
+        position: relative;
+        margin-bottom: 15px;
+      }
+
+      .search-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #538558;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .search-btn:hover {
+        background: #3a6a3d;
+      }
+
+      .search-results {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        display: none;
+      }
+
+      .search-result-item {
+        padding: 10px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+      }
+
+      .search-result-item:hover {
+        background-color: #f5f5f5;
+      }
+
+      .search-result-item strong {
+        color: #538558;
+      }
+
+      .secondary-btn {
+        background-color: #6c757d;
+        color: white;
+      }
+
+      .secondary-btn:hover {
+        background-color: #5a6268;
+      }
+
       :root {
         --primary-color: #538558;
         --secondary-color: #a8a48c;
@@ -624,52 +785,100 @@
         </select>
 
         <label for="meal-name">Meal Name:</label>
-        <input
-          type="text"
-          id="meal-name"
-          placeholder="Name of the meal"
-          required
-        />
+        <div class="search-container">
+          <input
+            type="text"
+            id="meal-name"
+            placeholder="Name of the meal"
+            required
+          />
+          <button type="button" id="search-food-btn" class="search-btn">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+        <div class="search-results" id="food-search-results"></div>
 
-        <label for="meal-calories">Calories:</label>
-        <input
-          type="number"
-          id="meal-calories"
-          placeholder="Calories"
-          required
-          min="0"
-        />
+        <div class="nutrition-inputs">
+          <div class="nutrition-base">
+            <h3>Nutrition per 100g</h3>
+            <div class="input-group">
+              <label for="base-calories">Calories:</label>
+              <input
+                type="number"
+                id="base-calories"
+                placeholder="kcal"
+                min="0"
+                step="1"
+              />
+            </div>
+            <div class="input-group">
+              <label for="base-proteins">Proteins (g):</label>
+              <input
+                type="number"
+                id="base-proteins"
+                placeholder="g"
+                min="0"
+                step="0.1"
+              />
+            </div>
+            <div class="input-group">
+              <label for="base-fats">Fats (g):</label>
+              <input
+                type="number"
+                id="base-fats"
+                placeholder="g"
+                min="0"
+                step="0.1"
+              />
+            </div>
+            <div class="input-group">
+              <label for="base-carbs">Carbs (g):</label>
+              <input
+                type="number"
+                id="base-carbs"
+                placeholder="g"
+                min="0"
+                step="0.1"
+              />
+            </div>
+          </div>
 
-        <label for="meal-proteins">Proteins (g):</label>
-        <input
-          type="number"
-          id="meal-proteins"
-          placeholder="Proteins"
-          required
-          min="0"
-        />
+          <div class="nutrition-calculated">
+            <h3>Calculated Values</h3>
+            <div class="input-group">
+              <label for="meal-grams">Weight (g):</label>
+              <input
+                type="number"
+                id="meal-grams"
+                placeholder="grams"
+                min="1"
+                value="100"
+              />
+            </div>
+            <div class="calculated-values">
+              <div>
+                <span>Calories:</span>
+                <span id="calculated-calories">0</span> kcal
+              </div>
+              <div>
+                <span>Proteins:</span> <span id="calculated-proteins">0</span> g
+              </div>
+              <div>
+                <span>Fats:</span> <span id="calculated-fats">0</span> g
+              </div>
+              <div>
+                <span>Carbs:</span> <span id="calculated-carbs">0</span> g
+              </div>
+            </div>
+          </div>
+        </div>
 
-        <label for="meal-fats">Fats (g):</label>
-        <input
-          type="number"
-          id="meal-fats"
-          placeholder="Fats"
-          required
-          min="0"
-        />
-
-        <label for="meal-carbs">Carbs (g):</label>
-        <input
-          type="number"
-          id="meal-carbs"
-          placeholder="Carbs"
-          required
-          min="0"
-        />
-
-        <div style="margin-top: 20px">
+        <div class="form-actions">
           <button id="save-meal">Save Meal</button>
-          <button id="close-modal">Cancel</button>
+          <button id="save-new-food" class="secondary-btn">
+            Save as New Food
+          </button>
+          <button id="close-modal" class="secondary-btn">Cancel</button>
         </div>
       </div>
     </div>
@@ -705,6 +914,7 @@
       }
 
       let currentDate = new Date();
+      let selectedFood = null;
 
       const currentDateElement = document.getElementById("current-date");
       const prevDayBtn = document.getElementById("prev-day");
@@ -714,6 +924,7 @@
       const closeModalBtn = document.getElementById("close-modal");
       const saveMealBtn = document.getElementById("save-meal");
       const mealsList = document.getElementById("meals-list");
+      const foodSearchResults = document.getElementById("food-search-results");
 
       function init() {
         updateDateDisplay();
@@ -734,6 +945,7 @@
         addMealBtn.addEventListener("click", () => {
           document.getElementById("meal-date").value =
             formatDateForAPI(currentDate);
+          resetMealForm();
           mealModal.style.display = "flex";
         });
 
@@ -741,15 +953,242 @@
           mealModal.style.display = "none";
         });
 
-        saveMealBtn.addEventListener("click", saveMeal);
-
         mealModal.addEventListener("click", (e) => {
           if (e.target === mealModal) {
             mealModal.style.display = "none";
           }
         });
 
+        document
+          .getElementById("meal-name")
+          .addEventListener("input", debounce(searchFood, 300));
+
+        document
+          .getElementById("meal-grams")
+          .addEventListener("input", calculateNutrition);
+        document
+          .getElementById("base-calories")
+          .addEventListener("input", calculateNutrition);
+        document
+          .getElementById("base-proteins")
+          .addEventListener("input", calculateNutrition);
+        document
+          .getElementById("base-fats")
+          .addEventListener("input", calculateNutrition);
+        document
+          .getElementById("base-carbs")
+          .addEventListener("input", calculateNutrition);
+
+        saveMealBtn.addEventListener("click", saveMeal);
+
         setInterval(loadDailyData, 60000);
+      }
+
+      function debounce(func, delay) {
+        let timeout;
+        return function () {
+          const context = this;
+          const args = arguments;
+          clearTimeout(timeout);
+          timeout = setTimeout(() => func.apply(context, args), delay);
+        };
+      }
+
+      async function searchFood() {
+        const query = document.getElementById("meal-name").value.trim();
+        const resultsContainer = document.getElementById("food-search-results");
+
+        if (query.length < 2) {
+          resultsContainer.style.display = "none";
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `/nutrition/api/search-food/?q=${encodeURIComponent(query)}`
+          );
+          if (!response.ok) throw new Error("Search failed");
+
+          const data = await response.json();
+          resultsContainer.innerHTML = "";
+
+          if (data.results && data.results.length > 0) {
+            data.results.forEach((food) => {
+              const item = document.createElement("div");
+              item.className = "search-result-item";
+              item.innerHTML = `
+                <strong>${food.name}</strong><br>
+                ${food.calories} kcal/100g | P: ${food.proteins}g | F: ${food.fats}g | C: ${food.carbs}g
+              `;
+              item.addEventListener("click", () => {
+                selectFoodFromDatabase(food);
+              });
+              resultsContainer.appendChild(item);
+            });
+            resultsContainer.style.display = "block";
+          } else {
+            resultsContainer.style.display = "none";
+          }
+        } catch (error) {
+          console.error("Search error:", error);
+          resultsContainer.style.display = "none";
+        }
+      }
+
+      function selectFoodFromDatabase(food) {
+        selectedFood = food;
+        document.getElementById("meal-name").value = food.name;
+        document.getElementById("base-calories").value = food.calories;
+        document.getElementById("base-proteins").value = food.proteins;
+        document.getElementById("base-fats").value = food.fats;
+        document.getElementById("base-carbs").value = food.carbs;
+
+        document.getElementById("food-search-results").style.display = "none";
+        calculateNutrition();
+      }
+
+      function calculateNutrition() {
+        const grams =
+          parseFloat(document.getElementById("meal-grams").value) || 100;
+        const factor = grams / 100;
+
+        const baseCalories =
+          parseFloat(document.getElementById("base-calories").value) || 0;
+        const baseProteins =
+          parseFloat(document.getElementById("base-proteins").value) || 0;
+        const baseFats =
+          parseFloat(document.getElementById("base-fats").value) || 0;
+        const baseCarbs =
+          parseFloat(document.getElementById("base-carbs").value) || 0;
+
+        document.getElementById("calculated-calories").textContent = (
+          baseCalories * factor
+        ).toFixed(1);
+        document.getElementById("calculated-proteins").textContent = (
+          baseProteins * factor
+        ).toFixed(1);
+        document.getElementById("calculated-fats").textContent = (
+          baseFats * factor
+        ).toFixed(1);
+        document.getElementById("calculated-carbs").textContent = (
+          baseCarbs * factor
+        ).toFixed(1);
+      }
+
+      async function saveMeal() {
+        if (!validateMealForm()) return;
+
+        const grams =
+          parseFloat(document.getElementById("meal-grams").value) || 100;
+        const factor = grams / 100;
+
+        const baseCalories =
+          parseFloat(document.getElementById("base-calories").value) || 0;
+        const baseProteins =
+          parseFloat(document.getElementById("base-proteins").value) || 0;
+        const baseFats =
+          parseFloat(document.getElementById("base-fats").value) || 0;
+        const baseCarbs =
+          parseFloat(document.getElementById("base-carbs").value) || 0;
+
+        const mealData = {
+          date: document.getElementById("meal-date").value,
+          meal_type: document.getElementById("meal-type").value,
+          name: document.getElementById("meal-name").value.trim(),
+          calories: Math.round(baseCalories * factor),
+          proteins: parseFloat((baseProteins * factor).toFixed(1)),
+          fats: parseFloat((baseFats * factor).toFixed(1)),
+          carbs: parseFloat((baseCarbs * factor).toFixed(1)),
+          grams: grams,
+          food_id: selectedFood ? selectedFood.id : null,
+        };
+
+        try {
+          const response = await fetch("/nutrition/api/save-meal/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify(mealData),
+          });
+
+          const data = await response.json();
+          if (data.status === "success") {
+            mealModal.style.display = "none";
+            loadDailyData();
+            resetMealForm();
+          } else {
+            throw new Error(data.error || "Failed to save meal");
+          }
+        } catch (error) {
+          console.error("Error saving meal:", error);
+          alert("Error saving meal: " + error.message);
+        }
+      }
+
+      function validateMealForm() {
+        const name = document.getElementById("meal-name").value.trim();
+        const grams = document.getElementById("meal-grams").value;
+        const baseCalories = document.getElementById("base-calories").value;
+        const baseProteins = document.getElementById("base-proteins").value;
+        const baseFats = document.getElementById("base-fats").value;
+        const baseCarbs = document.getElementById("base-carbs").value;
+
+        if (!name) {
+          alert("Please enter a meal name");
+          return false;
+        }
+
+        if (!grams || isNaN(grams) || parseInt(grams) <= 0) {
+          alert("Please enter a valid grams amount");
+          return false;
+        }
+
+        if (
+          !baseCalories ||
+          isNaN(baseCalories) ||
+          parseFloat(baseCalories) < 0
+        ) {
+          alert("Please enter a valid calorie amount per 100g");
+          return false;
+        }
+
+        if (
+          !baseProteins ||
+          isNaN(baseProteins) ||
+          parseFloat(baseProteins) < 0
+        ) {
+          alert("Please enter a valid protein amount per 100g");
+          return false;
+        }
+
+        if (!baseFats || isNaN(baseFats) || parseFloat(baseFats) < 0) {
+          alert("Please enter a valid fat amount per 100g");
+          return false;
+        }
+
+        if (!baseCarbs || isNaN(baseCarbs) || parseFloat(baseCarbs) < 0) {
+          alert("Please enter a valid carb amount per 100g");
+          return false;
+        }
+
+        return true;
+      }
+
+      function resetMealForm() {
+        document.getElementById("meal-name").value = "";
+        document.getElementById("meal-grams").value = "100";
+        document.getElementById("base-calories").value = "";
+        document.getElementById("base-proteins").value = "";
+        document.getElementById("base-fats").value = "";
+        document.getElementById("base-carbs").value = "";
+        document.getElementById("calculated-calories").textContent = "0";
+        document.getElementById("calculated-proteins").textContent = "0";
+        document.getElementById("calculated-fats").textContent = "0";
+        document.getElementById("calculated-carbs").textContent = "0";
+        document.getElementById("food-search-results").style.display = "none";
+        selectedFood = null;
       }
 
       function updateDateDisplay() {
@@ -764,8 +1203,8 @@
             `/nutrition/api/get-daily-nutrition/?date=${dateStr}`
           );
           if (!response.ok) throw new Error("Failed to load daily data");
-          const data = await response.json();
 
+          const data = await response.json();
           if (data.status === "success") {
             updateMealsList(data.meals);
             updateWaterIntakeDisplay(data.water_intake || 0);
@@ -780,8 +1219,13 @@
         mealsList.innerHTML = "";
 
         if (!meals || meals.length === 0) {
-          mealsList.innerHTML =
-            '<tr><td colspan="2" style="text-align: center; padding: 20px; color: #666;">No meals recorded for this day</td></tr>';
+          mealsList.innerHTML = `
+            <tr>
+              <td colspan="2" style="text-align: center; padding: 20px; color: #666;">
+                No meals recorded for this day
+              </td>
+            </tr>
+          `;
           return;
         }
 
@@ -800,42 +1244,44 @@
           if (meals.length === 0) continue;
 
           const typeRow = document.createElement("tr");
-          typeRow.innerHTML = `<td colspan="2" class="meal-type-header" data-meal-type="${mealType}">${
-            mealType.charAt(0).toUpperCase() + mealType.slice(1)
-          }</td>`;
+          typeRow.innerHTML = `
+            <td colspan="2" class="meal-type-header" data-meal-type="${mealType}">
+              ${mealType.charAt(0).toUpperCase() + mealType.slice(1)}
+            </td>
+          `;
           mealsList.appendChild(typeRow);
 
           meals.forEach((meal) => {
             const mealRow = document.createElement("tr");
             mealRow.innerHTML = `
-                <td style="font-weight: 500;">${meal.name}</td>
-                <td>
-                    <div class="meal-details">
-                        <span style="color: ${
-                          meal.calories > 500
-                            ? "var(--danger-color)"
-                            : "var(--success-color)"
-                        }">
-                            <i class="fas fa-fire" style="color: inherit;"></i>
-                            ${meal.calories} kcal
-                        </span>
-                        <span>
-                            <i class="fas fa-dumbbell" style="color: #e63946;"></i>
-                            ${meal.proteins}g
-                        </span>
-                        <span>
-                            <i class="fas fa-bacon" style="color: #457b9d;"></i>
-                            ${meal.fats}g
-                        </span>
-                        <span>
-                            <i class="fas fa-bread-slice" style="color: #2a9d8f;"></i>
-                            ${meal.carbs}g
-                        </span>
-                        <button class="delete-meal" data-meal-id="${
-                          meal.id
-                        }" title="Delete meal">×</button>
-                    </div>
-                </td>
+              <td style="font-weight: 500;">${meal.name} (${meal.grams}g)</td>
+              <td>
+                <div class="meal-details">
+                  <span style="color: ${
+                    meal.calories > 500
+                      ? "var(--danger-color)"
+                      : "var(--success-color)"
+                  }">
+                    <i class="fas fa-fire" style="color: inherit;"></i>
+                    ${meal.calories} kcal
+                  </span>
+                  <span>
+                    <i class="fas fa-dumbbell" style="color: #e63946;"></i>
+                    ${meal.proteins}g
+                  </span>
+                  <span>
+                    <i class="fas fa-bacon" style="color: #457b9d;"></i>
+                    ${meal.fats}g
+                  </span>
+                  <span>
+                    <i class="fas fa-bread-slice" style="color: #2a9d8f;"></i>
+                    ${meal.carbs}g
+                  </span>
+                  <button class="delete-meal" data-meal-id="${
+                    meal.id
+                  }" title="Delete meal">×</button>
+                </div>
+              </td>
             `;
             mealsList.appendChild(mealRow);
           });
@@ -844,6 +1290,59 @@
         document.querySelectorAll(".delete-meal").forEach((btn) => {
           btn.addEventListener("click", deleteMeal);
         });
+      }
+
+      async function deleteMeal(e) {
+        const mealId = e.currentTarget.getAttribute("data-meal-id");
+
+        if (!confirm("Are you sure you want to delete this meal?")) return;
+
+        try {
+          const response = await fetch(
+            `/nutrition/api/delete-meal/${mealId}/`,
+            {
+              method: "DELETE",
+              headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+              },
+            }
+          );
+
+          if (!response.ok) throw new Error("Failed to delete meal");
+
+          loadDailyData();
+        } catch (error) {
+          console.error("Error deleting meal:", error);
+          alert("Error deleting meal: " + error.message);
+        }
+      }
+
+      async function updateWaterIntake(amount) {
+        const dateStr = formatDateForAPI(currentDate);
+        const currentAmount =
+          parseInt(document.getElementById("water-intake").textContent) || 0;
+        const newAmount = Math.max(0, currentAmount + amount);
+
+        try {
+          const response = await fetch("/nutrition/api/update-water-intake/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify({
+              date: dateStr,
+              amount: newAmount,
+            }),
+          });
+
+          const data = await response.json();
+          if (data.status === "success") {
+            updateWaterIntakeDisplay(data.water_intake);
+          }
+        } catch (error) {
+          console.error("Error updating water:", error);
+        }
       }
 
       function updateWaterIntakeDisplay(amount) {
@@ -917,135 +1416,6 @@
           circle.style.borderColor = "var(--warning-color)";
         } else {
           circle.style.borderColor = "var(--primary-color)";
-        }
-      }
-
-      function validateMealForm() {
-        const name = document.getElementById("meal-name").value.trim();
-        const calories = document.getElementById("meal-calories").value;
-        const proteins = document.getElementById("meal-proteins").value;
-        const fats = document.getElementById("meal-fats").value;
-        const carbs = document.getElementById("meal-carbs").value;
-
-        if (!name) {
-          alert("Please enter a meal name");
-          return false;
-        }
-
-        if (!calories || isNaN(calories) || parseInt(calories) < 0) {
-          alert("Please enter a valid calorie amount");
-          return false;
-        }
-
-        if (!proteins || isNaN(proteins) || parseInt(proteins) < 0) {
-          alert("Please enter a valid protein amount");
-          return false;
-        }
-
-        if (!fats || isNaN(fats) || parseInt(fats) < 0) {
-          alert("Please enter a valid fat amount");
-          return false;
-        }
-
-        if (!carbs || isNaN(carbs) || parseInt(carbs) < 0) {
-          alert("Please enter a valid carb amount");
-          return false;
-        }
-
-        return true;
-      }
-
-      async function saveMeal() {
-        if (!validateMealForm()) return;
-
-        const mealData = {
-          date: document.getElementById("meal-date").value,
-          meal_type: document.getElementById("meal-type").value,
-          name: document.getElementById("meal-name").value.trim(),
-          calories:
-            parseInt(document.getElementById("meal-calories").value) || 0,
-          proteins:
-            parseInt(document.getElementById("meal-proteins").value) || 0,
-          fats: parseInt(document.getElementById("meal-fats").value) || 0,
-          carbs: parseInt(document.getElementById("meal-carbs").value) || 0,
-        };
-
-        try {
-          const response = await fetch("/nutrition/api/save-meal/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": getCookie("csrftoken"),
-            },
-            body: JSON.stringify(mealData),
-          });
-
-          if (!response.ok) throw new Error("Failed to save meal");
-
-          mealModal.style.display = "none";
-          loadDailyData();
-
-          document.getElementById("meal-name").value = "";
-          document.getElementById("meal-calories").value = "";
-          document.getElementById("meal-proteins").value = "";
-          document.getElementById("meal-fats").value = "";
-          document.getElementById("meal-carbs").value = "";
-        } catch (error) {
-          console.error("Error saving meal:", error);
-          alert("Error saving meal: " + error.message);
-        }
-      }
-
-      async function deleteMeal(e) {
-        const mealId = e.currentTarget.getAttribute("data-meal-id");
-
-        if (!confirm("Are you sure you want to delete this meal?")) return;
-
-        try {
-          const response = await fetch(
-            `/nutrition/api/delete-meal/${mealId}/`,
-            {
-              method: "DELETE",
-              headers: {
-                "X-CSRFToken": getCookie("csrftoken"),
-              },
-            }
-          );
-
-          if (!response.ok) throw new Error("Failed to delete meal");
-
-          loadDailyData();
-        } catch (error) {
-          console.error("Error deleting meal:", error);
-          alert("Error deleting meal: " + error.message);
-        }
-      }
-
-      async function updateWaterIntake(amount) {
-        const dateStr = formatDateForAPI(currentDate);
-        const currentAmount =
-          parseInt(document.getElementById("water-intake").textContent) || 0;
-        const newAmount = Math.max(0, currentAmount + amount);
-
-        try {
-          const response = await fetch("/nutrition/api/update-water-intake/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": getCookie("csrftoken"),
-            },
-            body: JSON.stringify({
-              date: dateStr,
-              amount: newAmount,
-            }),
-          });
-
-          const data = await response.json();
-          if (data.status === "success") {
-            updateWaterIntakeDisplay(data.water_intake);
-          }
-        } catch (error) {
-          console.error("Error updating water:", error);
         }
       }
 

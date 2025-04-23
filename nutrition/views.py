@@ -7,6 +7,13 @@ from users.models import UserDetails
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
+from .models import FoodItem
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
+from .models import FoodItem
+import json
 
 def calculate_daily_calories(user_details):
     age = (datetime.now().date() - user_details.birth_date).days // 365 if user_details.birth_date else 30
@@ -293,3 +300,119 @@ def api_get_daily_nutrition(request):
         'status': 'error',
         'error': 'Invalid request method'
     }, status=405)
+
+@csrf_exempt
+def api_search_food(request):
+    if request.method == 'GET':
+        query = request.GET.get('q', '').strip().lower()
+        
+        if len(query) < 2:
+            return JsonResponse({'status': 'error', 'error': 'Query too short'})
+        
+        results = FoodItem.objects.filter(name__icontains=query)[:10]
+        
+        return JsonResponse({
+            'status': 'success',
+            'results': [{
+                'id': item.id,
+                'name': item.name,
+                'calories': item.calories,
+                'proteins': float(item.proteins),
+                'fats': float(item.fats),
+                'carbs': float(item.carbs)
+            } for item in results]
+        })
+    
+    return JsonResponse({'status': 'error', 'error': 'Invalid method'})
+
+@csrf_exempt
+def api_save_food(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            existing = FoodItem.objects.filter(name__iexact=data['name']).first()
+            if existing:
+                return JsonResponse({
+                    'status': 'error',
+                    'error': 'Food with this name already exists'
+                })
+
+            food = FoodItem.objects.create(
+                name=data['name'],
+                calories=data['calories'],
+                proteins=data['proteins'],
+                fats=data['fats'],
+                carbs=data['carbs']
+            )
+            
+            return JsonResponse({
+                'status': 'success',
+                'food_id': food.id
+            })
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'error': str(e)
+            }, status=400)
+    
+    return JsonResponse({'status': 'error', 'error': 'Invalid method'}, status=405)
+
+@csrf_exempt
+def api_save_meal(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            user_details = UserDetails.objects.get(user=request.user)
+            date = datetime.strptime(data['date'], '%Y-%m-%d').date()
+            calculated = calculate_daily_calories(user_details)
+            daily_nutrition, created = DailyNutrition.objects.get_or_create(
+                user=user_details,
+                date=date,
+                defaults={
+                    'calories': 0,
+                    'proteins': 0,
+                    'fats': 0,
+                    'carbs': 0,
+                    'goal_calories': calculated['calories'],
+                    'goal_proteins': calculated['proteins'],
+                    'goal_fats': calculated['fats'],
+                    'goal_carbs': calculated['carbs'],
+                    'water_intake': 0
+                }
+            )
+
+            food_item = None
+            if data.get('food_id'):
+                food_item = FoodItem.objects.get(id=data['food_id'])
+
+            meal = Meal.objects.create(
+                nutrition=daily_nutrition,
+                food_item=food_item,
+                meal_type=data['meal_type'],
+                name=data['name'],
+                calories=data['calories'],
+                proteins=data['proteins'],
+                fats=data['fats'],
+                carbs=data['carbs'],
+                grams=data['grams']
+            )
+
+            # Обновляем дневные показатели
+            daily_nutrition.calories += data['calories']
+            daily_nutrition.proteins += data['proteins']
+            daily_nutrition.fats += data['fats']
+            daily_nutrition.carbs += data['carbs']
+            daily_nutrition.save()
+
+            return JsonResponse({
+                'status': 'success',
+                'meal_id': meal.id
+            })
+
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'error': str(e)
+            }, status=400)
+
+    return JsonResponse({'status': 'error', 'error': 'Invalid method'}, status=405)
