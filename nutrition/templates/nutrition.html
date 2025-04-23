@@ -11,165 +11,135 @@
     />
     <title>Calories Counter</title>
     <style>
-      .modal-content {
-        width: 90%;
-        max-width: 500px;
-        padding: 25px;
-      }
-
-      .nutrition-inputs {
-        display: flex;
-        gap: 20px;
-        margin: 15px 0;
-      }
-
-      .nutrition-base,
-      .nutrition-calculated {
-        flex: 1;
-        background: #f5f5f5;
-        padding: 15px;
-        border-radius: 8px;
-      }
-
-      .nutrition-inputs h3 {
-        margin-top: 0;
-        font-size: 16px;
-        color: #333;
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 8px;
-      }
-
-      .input-group {
-        margin-bottom: 10px;
-      }
-
-      .input-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-size: 14px;
-      }
-
-      .input-group input {
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
         width: 100%;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-      }
-
-      .calculated-values {
-        margin-top: 10px;
-        font-size: 14px;
-      }
-
-      .calculated-values div {
-        margin-bottom: 5px;
-      }
-
-      .calculated-values span {
-        font-weight: 500;
-      }
-
-      .search-results {
-        max-height: 150px;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
         overflow-y: auto;
-        margin: 5px 0;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        display: none;
+        padding: 20px 0;
       }
 
-      .search-result-item {
-        padding: 8px 12px;
-        cursor: pointer;
-        border-bottom: 1px solid #eee;
-        font-size: 14px;
+      .modal-content {
+        background-color: white;
+        margin: 20px auto;
+        padding: 25px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        max-height: 90vh;
+        overflow-y: auto;
       }
 
-      .search-result-item:hover {
-        background-color: #f0f0f0;
-      }
-
-      .search-result-item strong {
-        color: #538558;
-      }
-
-      .form-actions {
+      .tabs {
         display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-top: 20px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ddd;
       }
 
-      .form-actions button {
+      .tab-btn {
         padding: 10px 20px;
+        background: none;
         border: none;
-        border-radius: 4px;
         cursor: pointer;
-        font-weight: 500;
-      }
-
-      #save-meal {
-        background-color: #538558;
-        color: white;
-      }
-
-      #close-modal {
-        background-color: #f0f0f0;
-        color: #333;
-      }
-
-      .search-container {
+        font-size: 16px;
+        color: #666;
         position: relative;
-        margin-bottom: 15px;
       }
 
-      .search-btn {
+      .tab-btn.active {
+        color: #538558;
+        font-weight: bold;
+      }
+
+      .tab-btn.active::after {
+        content: "";
         position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: #538558;
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 4px;
-        cursor: pointer;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #538558;
       }
 
-      .search-btn:hover {
-        background: #3a6a3d;
-      }
-
-      .search-results {
-        max-height: 200px;
-        overflow-y: auto;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        margin-bottom: 15px;
+      .tab-content {
         display: none;
       }
 
-      .search-result-item {
-        padding: 10px;
-        cursor: pointer;
-        border-bottom: 1px solid #eee;
+      .tab-content.active {
+        display: block;
       }
 
-      .search-result-item:hover {
+      .saved-foods-container {
+        margin-top: 15px;
+      }
+
+      .saved-foods-list {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      .food-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .food-item:hover {
         background-color: #f5f5f5;
       }
 
-      .search-result-item strong {
-        color: #538558;
+      .food-item:last-child {
+        border-bottom: none;
       }
 
-      .secondary-btn {
-        background-color: #6c757d;
-        color: white;
+      .food-name {
+        font-weight: bold;
+        margin-bottom: 5px;
       }
 
-      .secondary-btn:hover {
-        background-color: #5a6268;
+      .food-nutrition {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .food-nutrition span {
+        margin-right: 10px;
+      }
+
+      .loading-text {
+        padding: 20px;
+        text-align: center;
+        color: #666;
+      }
+
+      .no-foods {
+        padding: 20px;
+        text-align: center;
+        color: #666;
+      }
+
+      @media (max-width: 768px) {
+        .nutrition-inputs {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .modal-content {
+          width: 95%;
+          padding: 15px;
+        }
       }
 
       :root {
@@ -772,103 +742,128 @@
 
     <div id="meal-modal" class="modal">
       <div class="modal-content">
+        <span class="close-btn" id="closeBtn">&times;</span>
         <h2>Add Meal</h2>
-        <label for="meal-date">Date:</label>
-        <input type="date" id="meal-date" required />
 
-        <label for="meal-type">Meal Type:</label>
-        <select id="meal-type" required>
-          <option value="breakfast">Breakfast</option>
-          <option value="lunch">Lunch</option>
-          <option value="dinner">Dinner</option>
-          <option value="snacks">Snacks</option>
-        </select>
-
-        <label for="meal-name">Meal Name:</label>
-        <div class="search-container">
-          <input
-            type="text"
-            id="meal-name"
-            placeholder="Name of the meal"
-            required
-          />
-          <button type="button" id="search-food-btn" class="search-btn">
-            <i class="fas fa-search"></i>
-          </button>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="new-food">New Food</button>
+          <button class="tab-btn" data-tab="saved-foods">My Foods</button>
         </div>
-        <div class="search-results" id="food-search-results"></div>
 
-        <div class="nutrition-inputs">
-          <div class="nutrition-base">
-            <h3>Nutrition per 100g</h3>
-            <div class="input-group">
-              <label for="base-calories">Calories:</label>
-              <input
-                type="number"
-                id="base-calories"
-                placeholder="kcal"
-                min="0"
-                step="1"
-              />
+        <div class="tab-content active" id="new-food-tab">
+          <label for="meal-date">Date:</label>
+          <input type="date" id="meal-date" required />
+
+          <label for="meal-type">Meal Type:</label>
+          <select id="meal-type" required>
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+            <option value="snacks">Snacks</option>
+          </select>
+
+          <label for="meal-name">Food Name:</label>
+          <div class="search-container">
+            <input
+              type="text"
+              id="meal-name"
+              placeholder="Search or enter food name"
+              required
+            />
+            <button type="button" id="search-food-btn" class="search-btn">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <div class="search-results" id="food-search-results"></div>
+
+          <div class="nutrition-inputs">
+            <div class="nutrition-base">
+              <h3>Nutrition per 100g</h3>
+              <div class="input-group">
+                <label for="base-calories">Calories:</label>
+                <input
+                  type="number"
+                  id="base-calories"
+                  placeholder="kcal"
+                  min="0"
+                  step="1"
+                />
+              </div>
+              <div class="input-group">
+                <label for="base-proteins">Proteins (g):</label>
+                <input
+                  type="number"
+                  id="base-proteins"
+                  placeholder="g"
+                  min="0"
+                  step="0.1"
+                />
+              </div>
+              <div class="input-group">
+                <label for="base-fats">Fats (g):</label>
+                <input
+                  type="number"
+                  id="base-fats"
+                  placeholder="g"
+                  min="0"
+                  step="0.1"
+                />
+              </div>
+              <div class="input-group">
+                <label for="base-carbs">Carbs (g):</label>
+                <input
+                  type="number"
+                  id="base-carbs"
+                  placeholder="g"
+                  min="0"
+                  step="0.1"
+                />
+              </div>
             </div>
-            <div class="input-group">
-              <label for="base-proteins">Proteins (g):</label>
-              <input
-                type="number"
-                id="base-proteins"
-                placeholder="g"
-                min="0"
-                step="0.1"
-              />
-            </div>
-            <div class="input-group">
-              <label for="base-fats">Fats (g):</label>
-              <input
-                type="number"
-                id="base-fats"
-                placeholder="g"
-                min="0"
-                step="0.1"
-              />
-            </div>
-            <div class="input-group">
-              <label for="base-carbs">Carbs (g):</label>
-              <input
-                type="number"
-                id="base-carbs"
-                placeholder="g"
-                min="0"
-                step="0.1"
-              />
+
+            <div class="nutrition-calculated">
+              <h3>Calculated Values</h3>
+              <div class="input-group">
+                <label for="meal-grams">Weight (g):</label>
+                <input
+                  type="number"
+                  id="meal-grams"
+                  placeholder="grams"
+                  min="1"
+                  value="100"
+                />
+              </div>
+              <div class="calculated-values">
+                <div>
+                  <span>Calories:</span>
+                  <span id="calculated-calories">0</span> kcal
+                </div>
+                <div>
+                  <span>Proteins:</span>
+                  <span id="calculated-proteins">0</span> g
+                </div>
+                <div>
+                  <span>Fats:</span> <span id="calculated-fats">0</span> g
+                </div>
+                <div>
+                  <span>Carbs:</span> <span id="calculated-carbs">0</span> g
+                </div>
+              </div>
             </div>
           </div>
+        </div>
 
-          <div class="nutrition-calculated">
-            <h3>Calculated Values</h3>
-            <div class="input-group">
-              <label for="meal-grams">Weight (g):</label>
+        <div class="tab-content" id="saved-foods-tab">
+          <div class="saved-foods-container">
+            <div class="search-container">
               <input
-                type="number"
-                id="meal-grams"
-                placeholder="grams"
-                min="1"
-                value="100"
+                type="text"
+                id="saved-foods-search"
+                placeholder="Search your foods..."
               />
             </div>
-            <div class="calculated-values">
-              <div>
-                <span>Calories:</span>
-                <span id="calculated-calories">0</span> kcal
-              </div>
-              <div>
-                <span>Proteins:</span> <span id="calculated-proteins">0</span> g
-              </div>
-              <div>
-                <span>Fats:</span> <span id="calculated-fats">0</span> g
-              </div>
-              <div>
-                <span>Carbs:</span> <span id="calculated-carbs">0</span> g
-              </div>
+            <div class="saved-foods-list" id="saved-foods-list">
+              <div class="loading-text">Loading your foods...</div>
             </div>
           </div>
         </div>
@@ -923,6 +918,7 @@
       const mealModal = document.getElementById("meal-modal");
       const closeModalBtn = document.getElementById("close-modal");
       const saveMealBtn = document.getElementById("save-meal");
+      const saveNewFoodBtn = document.getElementById("save-new-food");
       const mealsList = document.getElementById("meals-list");
       const foodSearchResults = document.getElementById("food-search-results");
 
@@ -959,6 +955,26 @@
           }
         });
 
+        document.querySelectorAll(".tab-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            document
+              .querySelectorAll(".tab-btn")
+              .forEach((b) => b.classList.remove("active"));
+            document
+              .querySelectorAll(".tab-content")
+              .forEach((c) => c.classList.remove("active"));
+
+            btn.classList.add("active");
+            document
+              .getElementById(`${btn.dataset.tab}-tab`)
+              .classList.add("active");
+
+            if (btn.dataset.tab === "saved-foods") {
+              loadUserFoods();
+            }
+          });
+        });
+
         document
           .getElementById("meal-name")
           .addEventListener("input", debounce(searchFood, 300));
@@ -979,7 +995,29 @@
           .getElementById("base-carbs")
           .addEventListener("input", calculateNutrition);
 
+        document.getElementById("saved-foods-search").addEventListener(
+          "input",
+          debounce(() => {
+            const searchTerm = document
+              .getElementById("saved-foods-search")
+              .value.toLowerCase();
+            const foodItems = document.querySelectorAll(".food-item");
+
+            foodItems.forEach((item) => {
+              const name = item
+                .querySelector(".food-name")
+                .textContent.toLowerCase();
+              if (name.includes(searchTerm)) {
+                item.style.display = "block";
+              } else {
+                item.style.display = "none";
+              }
+            });
+          }, 300)
+        );
+
         saveMealBtn.addEventListener("click", saveMeal);
+        saveNewFoodBtn.addEventListener("click", saveNewFood);
 
         setInterval(loadDailyData, 60000);
       }
@@ -1017,9 +1055,9 @@
               const item = document.createElement("div");
               item.className = "search-result-item";
               item.innerHTML = `
-                <strong>${food.name}</strong><br>
-                ${food.calories} kcal/100g | P: ${food.proteins}g | F: ${food.fats}g | C: ${food.carbs}g
-              `;
+                            <strong>${food.name}</strong><br>
+                            ${food.calories} kcal/100g | P: ${food.proteins}g | F: ${food.fats}g | C: ${food.carbs}g
+                        `;
               item.addEventListener("click", () => {
                 selectFoodFromDatabase(food);
               });
@@ -1035,6 +1073,49 @@
         }
       }
 
+      function loadUserFoods() {
+        const foodsList = document.getElementById("saved-foods-list");
+        foodsList.innerHTML =
+          '<div class="loading-text">Loading your foods...</div>';
+
+        fetch("/nutrition/api/get-user-foods/", {
+          headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === "success" && data.foods.length > 0) {
+              foodsList.innerHTML = "";
+              data.foods.forEach((food) => {
+                const foodItem = document.createElement("div");
+                foodItem.className = "food-item";
+                foodItem.innerHTML = `
+                            <div class="food-name">${food.name}</div>
+                            <div class="food-nutrition">
+                                <span>${food.calories} kcal</span>
+                                <span>P: ${food.proteins}g</span>
+                                <span>F: ${food.fats}g</span>
+                                <span>C: ${food.carbs}g</span>
+                            </div>
+                        `;
+                foodItem.addEventListener("click", () => {
+                  selectSavedFood(food);
+                });
+                foodsList.appendChild(foodItem);
+              });
+            } else {
+              foodsList.innerHTML =
+                '<div class="no-foods">No saved foods found. Add some first!</div>';
+            }
+          })
+          .catch((error) => {
+            console.error("Error loading foods:", error);
+            foodsList.innerHTML =
+              '<div class="no-foods">Error loading foods. Please try again.</div>';
+          });
+      }
+
       function selectFoodFromDatabase(food) {
         selectedFood = food;
         document.getElementById("meal-name").value = food.name;
@@ -1045,6 +1126,20 @@
 
         document.getElementById("food-search-results").style.display = "none";
         calculateNutrition();
+      }
+
+      function selectSavedFood(food) {
+        selectedFood = food;
+        document.getElementById("meal-name").value = food.name;
+        document.getElementById("base-calories").value = food.calories;
+        document.getElementById("base-proteins").value = food.proteins;
+        document.getElementById("base-fats").value = food.fats;
+        document.getElementById("base-carbs").value = food.carbs;
+
+        calculateNutrition();
+
+        // Switch back to new food tab
+        document.querySelector('.tab-btn[data-tab="new-food"]').click();
       }
 
       function calculateNutrition() {
@@ -1124,6 +1219,48 @@
         } catch (error) {
           console.error("Error saving meal:", error);
           alert("Error saving meal: " + error.message);
+        }
+      }
+
+      async function saveNewFood() {
+        if (!validateMealForm()) return;
+
+        const name = document.getElementById("meal-name").value.trim();
+        const calories =
+          parseFloat(document.getElementById("base-calories").value) || 0;
+        const proteins =
+          parseFloat(document.getElementById("base-proteins").value) || 0;
+        const fats =
+          parseFloat(document.getElementById("base-fats").value) || 0;
+        const carbs =
+          parseFloat(document.getElementById("base-carbs").value) || 0;
+
+        try {
+          const response = await fetch("/nutrition/api/save-food/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify({
+              name: name,
+              calories: calories,
+              proteins: proteins,
+              fats: fats,
+              carbs: carbs,
+            }),
+          });
+
+          const data = await response.json();
+          if (data.status === "success") {
+            alert("Food saved successfully!");
+            loadUserFoods();
+          } else {
+            throw new Error(data.error || "Failed to save food");
+          }
+        } catch (error) {
+          console.error("Error saving food:", error);
+          alert("Error saving food: " + error.message);
         }
       }
 
@@ -1220,12 +1357,12 @@
 
         if (!meals || meals.length === 0) {
           mealsList.innerHTML = `
-            <tr>
-              <td colspan="2" style="text-align: center; padding: 20px; color: #666;">
-                No meals recorded for this day
-              </td>
-            </tr>
-          `;
+                    <tr>
+                        <td colspan="2" style="text-align: center; padding: 20px; color: #666;">
+                            No meals recorded for this day
+                        </td>
+                    </tr>
+                `;
           return;
         }
 
@@ -1245,44 +1382,47 @@
 
           const typeRow = document.createElement("tr");
           typeRow.innerHTML = `
-            <td colspan="2" class="meal-type-header" data-meal-type="${mealType}">
-              ${mealType.charAt(0).toUpperCase() + mealType.slice(1)}
-            </td>
-          `;
+                    <td colspan="2" class="meal-type-header" data-meal-type="${mealType}">
+                        ${mealType.charAt(0).toUpperCase() + mealType.slice(1)}
+                    </td>
+                `;
           mealsList.appendChild(typeRow);
 
           meals.forEach((meal) => {
+            const gramsDisplay = meal.grams ? ` (${meal.grams}g)` : "";
             const mealRow = document.createElement("tr");
             mealRow.innerHTML = `
-              <td style="font-weight: 500;">${meal.name} (${meal.grams}g)</td>
-              <td>
-                <div class="meal-details">
-                  <span style="color: ${
-                    meal.calories > 500
-                      ? "var(--danger-color)"
-                      : "var(--success-color)"
-                  }">
-                    <i class="fas fa-fire" style="color: inherit;"></i>
-                    ${meal.calories} kcal
-                  </span>
-                  <span>
-                    <i class="fas fa-dumbbell" style="color: #e63946;"></i>
-                    ${meal.proteins}g
-                  </span>
-                  <span>
-                    <i class="fas fa-bacon" style="color: #457b9d;"></i>
-                    ${meal.fats}g
-                  </span>
-                  <span>
-                    <i class="fas fa-bread-slice" style="color: #2a9d8f;"></i>
-                    ${meal.carbs}g
-                  </span>
-                  <button class="delete-meal" data-meal-id="${
-                    meal.id
-                  }" title="Delete meal">×</button>
-                </div>
-              </td>
-            `;
+                        <td style="font-weight: 500;">${
+                          meal.name
+                        }${gramsDisplay}</td>
+                        <td>
+                            <div class="meal-details">
+                                <span style="color: ${
+                                  meal.calories > 500
+                                    ? "var(--danger-color)"
+                                    : "var(--success-color)"
+                                }">
+                                    <i class="fas fa-fire" style="color: inherit;"></i>
+                                    ${meal.calories} kcal
+                                </span>
+                                <span>
+                                    <i class="fas fa-dumbbell" style="color: #e63946;"></i>
+                                    ${meal.proteins}g
+                                </span>
+                                <span>
+                                    <i class="fas fa-bacon" style="color: #457b9d;"></i>
+                                    ${meal.fats}g
+                                </span>
+                                <span>
+                                    <i class="fas fa-bread-slice" style="color: #2a9d8f;"></i>
+                                    ${meal.carbs}g
+                                </span>
+                                <button class="delete-meal" data-meal-id="${
+                                  meal.id
+                                }" title="Delete meal">×</button>
+                            </div>
+                        </td>
+                    `;
             mealsList.appendChild(mealRow);
           });
         }

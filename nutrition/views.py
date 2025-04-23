@@ -416,3 +416,47 @@ def api_save_meal(request):
             }, status=400)
 
     return JsonResponse({'status': 'error', 'error': 'Invalid method'}, status=405)
+
+# Добавим в существующий views.py
+
+@login_required
+@csrf_exempt
+def api_get_food_item(request, food_id):
+    if request.method == 'GET':
+        try:
+            food = FoodItem.objects.get(id=food_id)
+            return JsonResponse({
+                'status': 'success',
+                'food': {
+                    'id': food.id,
+                    'name': food.name,
+                    'calories': food.calories,
+                    'proteins': float(food.proteins),
+                    'fats': float(food.fats),
+                    'carbs': float(food.carbs)
+                }
+            })
+        except FoodItem.DoesNotExist:
+            return JsonResponse({'status': 'error', 'error': 'Food not found'}, status=404)
+    return JsonResponse({'status': 'error', 'error': 'Invalid method'}, status=405)
+
+@login_required
+@csrf_exempt
+def api_get_user_foods(request):
+    if request.method == 'GET':
+        try:
+            foods = FoodItem.objects.filter(created_by=request.user).order_by('-created_at')[:20]
+            return JsonResponse({
+                'status': 'success',
+                'foods': [{
+                    'id': food.id,
+                    'name': food.name,
+                    'calories': food.calories,
+                    'proteins': float(food.proteins),
+                    'fats': float(food.fats),
+                    'carbs': float(food.carbs)
+                } for food in foods]
+            })
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'error': str(e)}, status=400)
+    return JsonResponse({'status': 'error', 'error': 'Invalid method'}, status=405)
