@@ -11,197 +11,31 @@
     />
     <title>Calories Counter</title>
     <style>
-      .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        overflow-y: auto;
-        padding: 20px 0;
-      }
-
-      .modal-content {
-        background-color: white;
-        margin: 20px auto;
-        padding: 25px;
-        border-radius: 10px;
-        width: 90%;
-        max-width: 600px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        max-height: 90vh;
-        overflow-y: auto;
-      }
-
-      .tabs {
-        display: flex;
-        margin-bottom: 20px;
-        border-bottom: 1px solid #ddd;
-      }
-
-      .tab-btn {
-        padding: 10px 20px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-        color: #666;
-        position: relative;
-      }
-
-      .tab-btn.active {
-        color: #538558;
-        font-weight: bold;
-      }
-
-      .tab-btn.active::after {
-        content: "";
-        position: absolute;
-        bottom: -1px;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background-color: #538558;
-      }
-
-      .tab-content {
-        display: none;
-      }
-
-      .tab-content.active {
-        display: block;
-      }
-
-      .saved-foods-container {
-        margin-top: 15px;
-      }
-
-      .saved-foods-list {
-        max-height: 300px;
-        overflow-y: auto;
-        margin-top: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-      }
-
-      .food-item {
-        padding: 12px 15px;
-        border-bottom: 1px solid #eee;
-        cursor: pointer;
-        transition: background-color 0.2s;
-      }
-
-      .food-item:hover {
-        background-color: #f5f5f5;
-      }
-
-      .food-item:last-child {
-        border-bottom: none;
-      }
-
-      .food-name {
-        font-weight: bold;
-        margin-bottom: 5px;
-      }
-
-      .food-nutrition {
-        display: flex;
-        justify-content: space-between;
-        font-size: 14px;
-        color: #666;
-      }
-
-      .food-nutrition span {
-        margin-right: 10px;
-      }
-
-      .loading-text {
-        padding: 20px;
-        text-align: center;
-        color: #666;
-      }
-
-      .no-foods {
-        padding: 20px;
-        text-align: center;
-        color: #666;
-      }
-
-      @media (max-width: 768px) {
-        .nutrition-inputs {
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .modal-content {
-          width: 95%;
-          padding: 15px;
-        }
-      }
-
       :root {
         --primary-color: #538558;
+        --primary-dark: #3a6a3d;
         --secondary-color: #a8a48c;
         --light-color: #f8f9fa;
         --dark-color: #333;
+        --light-gray: #f5f5f5;
+        --medium-gray: #e0e0e0;
+        --dark-gray: #666;
         --success-color: #28a745;
         --danger-color: #dc3545;
         --warning-color: #ffc107;
         --info-color: #17a2b8;
+        --border-radius: 12px;
+        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
       }
 
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         color: var(--dark-color);
-        background-color: #f5f5f5;
         line-height: 1.6;
-      }
-
-      .header {
-        height: 60px;
-        background-color: var(--secondary-color);
-        padding: 0 20px;
-        display: flex;
-        align-items: center;
-      }
-
-      .today {
-        background-color: var(--primary-color);
-        color: white;
-        border-radius: 50%;
-        padding: 8px;
-        margin-left: 10px;
-        font-weight: bold;
-      }
-
-      .selected-day {
-        border: 2px solid var(--primary-color);
-      }
-
-      .meal-entry {
-        background-color: white;
-        padding: 12px;
-        margin: 8px 0;
-        border-radius: 8px;
-        font-size: 14px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-      }
-
-      .meal-entry:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .remaining-positive {
-        color: var(--success-color);
-      }
-
-      .remaining-negative {
-        color: var(--danger-color);
+        background-color: var(--light-gray);
+        margin: 0;
+        padding: 0;
       }
 
       .container {
@@ -209,23 +43,25 @@
         flex-wrap: wrap;
         padding: 25px;
         gap: 25px;
+        max-width: 1200px;
+        margin: 30px auto;
+      }
+
+      .calendar,
+      .summary {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 25px;
+        box-shadow: var(--box-shadow);
       }
 
       .calendar {
         flex: 1;
         min-width: 300px;
-        background: rgb(243 242 237);
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       }
 
       .summary {
         flex: 0 0 350px;
-        background: rgb(243 242 237);
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       }
 
       .calendar-header {
@@ -253,20 +89,13 @@
         border-radius: 30px;
         cursor: pointer;
         font-size: 1em;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: var(--transition);
       }
 
       .calendar-header button:hover {
-        background: #3a6a3d;
+        background: var(--primary-dark);
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-      }
-
-      #prev-day,
-      #next-day {
-        padding: 10px 15px;
-        min-width: 50px;
       }
 
       table {
@@ -278,17 +107,52 @@
       td {
         padding: 12px 15px;
         text-align: left;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid var(--medium-gray);
       }
 
       th {
-        background-color: #d1ccb6;
+        background-color: var(--light-gray);
         font-weight: 600;
-        color: var(--dark-color);
+      }
+
+      .meal-type-header {
+        background-color: #f0f0f0;
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 12px 15px;
+        text-transform: capitalize;
+      }
+
+      .meal-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .meal-details span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .delete-meal {
+        background: none;
+        border: none;
+        color: var(--danger-color);
+        cursor: pointer;
+        font-size: 1.2rem;
+        margin-left: 10px;
+        transition: transform 0.2s ease;
+      }
+
+      .delete-meal:hover {
+        transform: scale(1.2);
       }
 
       .circle {
-        background: var(--light-color);
+        background: white;
         border-radius: 50%;
         width: 220px;
         height: 220px;
@@ -298,7 +162,7 @@
         align-items: center;
         margin: 0 auto 25px;
         border: 8px solid #e9ecef;
-        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+        transition: var(--transition);
       }
 
       .big-text {
@@ -314,14 +178,6 @@
 
       .macro-item {
         margin: 15px 0;
-        position: relative;
-      }
-
-      .macro-item i {
-        margin-right: 10px;
-        color: var(--primary-color);
-        width: 20px;
-        text-align: center;
       }
 
       .macro-info {
@@ -330,17 +186,9 @@
         margin-bottom: 5px;
       }
 
-      .macro-values {
-        font-weight: 500;
-      }
-
-      .progress-container {
-        width: 100%;
-      }
-
       .progress-bar {
         height: 8px;
-        background: rgb(170, 167, 167);
+        background: #e9ecef;
         border-radius: 4px;
         overflow: hidden;
       }
@@ -366,19 +214,7 @@
       .water-tracker {
         margin-top: 25px;
         padding-top: 20px;
-        border-top: 1px solid #e0e0e0;
-      }
-
-      .water-tracker h3 {
-        margin-top: 0;
-        color: black;
-        display: flex;
-        align-items: center;
-      }
-
-      .water-tracker h3 i {
-        margin-right: 10px;
-        color: var(--info-color);
+        border-top: 1px solid var(--medium-gray);
       }
 
       .water-info {
@@ -387,24 +223,9 @@
         margin: 10px 0;
       }
 
-      .water-remaining {
-        color: var(--info-color);
-        font-weight: 500;
-      }
-
       .water-tracker progress {
         width: 100%;
         height: 10px;
-        border-radius: 5px;
-      }
-
-      .water-tracker progress::-webkit-progress-bar {
-        background-color: #e9ecef;
-        border-radius: 5px;
-      }
-
-      .water-tracker progress::-webkit-progress-value {
-        background-color: var(--info-color);
         border-radius: 5px;
       }
 
@@ -421,15 +242,10 @@
         padding: 8px 15px;
         border-radius: 4px;
         cursor: pointer;
-        transition: background 0.3s ease;
+        transition: var(--transition);
         flex: 1;
       }
 
-      .water-tracker button:hover {
-        background: #138496;
-      }
-
-      /* Стили для модального окна добавления еды */
       .modal {
         display: none;
         position: fixed;
@@ -439,8 +255,79 @@
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 1000;
-        justify-content: center;
-        align-items: center;
+        overflow-y: auto;
+        padding: 20px 0;
+      }
+
+      .modal-content {
+        background-color: white;
+        margin: 20px auto;
+        padding: 30px;
+        border-radius: var(--border-radius);
+        width: 90%;
+        max-width: 600px;
+        box-shadow: var(--box-shadow);
+        position: relative;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--dark-gray);
+        transition: var(--transition);
+      }
+
+      .modal-close:hover {
+        color: var(--dark-color);
+      }
+
+      .modal-title {
+        margin-top: 0;
+        color: var(--primary-color);
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--medium-gray);
+      }
+
+      .tabs {
+        display: flex;
+        margin-bottom: 20px;
+        border-bottom: 2px solid var(--medium-gray);
+      }
+
+      .tab-btn {
+        padding: 12px 20px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        color: var(--dark-gray);
+        position: relative;
+        font-weight: 500;
+        transition: var(--transition);
+      }
+
+      .tab-btn.active {
+        color: var(--primary-color);
+        font-weight: 600;
+      }
+
+      .tab-btn.active::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: var(--primary-color);
+      }
+
+      .tab-content {
+        display: none;
         animation: fadeIn 0.3s ease;
       }
 
@@ -453,153 +340,239 @@
         }
       }
 
-      .modal-content {
-        background-color: white;
-        padding: 30px;
-        border-radius: 10px;
-        width: 90%;
-        max-width: 500px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        animation: slideUp 0.4s ease;
+      .tab-content.active {
+        display: block;
       }
 
-      @keyframes slideUp {
-        from {
-          transform: translateY(20px);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
+      .form-group {
+        margin-bottom: 20px;
       }
 
-      .modal-content h2 {
-        margin-top: 0;
-        color: var(--primary-color);
-        border-bottom: 1px solid #eee;
-        padding-bottom: 10px;
-      }
-
-      .modal-content label {
+      .form-group label {
         display: block;
         margin-bottom: 8px;
         font-weight: 500;
         color: var(--dark-color);
       }
 
-      .modal-content input,
-      .modal-content select {
+      .form-control {
         width: 100%;
         padding: 12px;
-        margin-bottom: 20px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
+        border: 1px solid var(--medium-gray);
+        border-radius: var(--border-radius);
         font-size: 1rem;
-        transition: border 0.3s ease;
+        transition: var(--transition);
       }
 
-      .modal-content input:focus,
-      .modal-content select:focus {
+      .form-control:focus {
         border-color: var(--primary-color);
         outline: none;
         box-shadow: 0 0 0 3px rgba(83, 133, 88, 0.2);
       }
 
-      .modal-content button {
-        padding: 12px 20px;
-        margin-right: 10px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 1rem;
-        font-weight: 500;
-        transition: all 0.3s ease;
-      }
-
-      #save-meal {
-        background-color: var(--success-color);
-        color: white;
-      }
-
-      #save-meal:hover {
-        background-color: #218838;
-      }
-
-      #close-modal {
-        background-color: #6c757d;
-        color: white;
-      }
-
-      #close-modal:hover {
-        background-color: #5a6268;
-      }
-
-      .delete-meal {
-        background: none;
-        border: none;
-        color: var(--danger-color);
-        cursor: pointer;
-        font-size: 1.2rem;
-        margin-left: 10px;
-        transition: transform 0.2s ease;
-      }
-
-      .delete-meal:hover {
-        transform: scale(1.2);
-      }
-
-      .meal-type-header {
-        background-color: #e2e0d1;
-        color: var(--primary-color);
-        font-weight: 600;
-        font-size: 1.1rem;
-        padding: 12px 15px;
-        text-transform: capitalize;
+      .search-container {
         position: relative;
-        padding-left: 45px;
       }
 
-      .meal-type-header::before {
-        content: "";
+      .search-btn {
         position: absolute;
-        left: 15px;
+        right: 10px;
         top: 50%;
         transform: translateY(-50%);
-        width: 24px;
-        height: 24px;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--dark-gray);
       }
 
-      .meal-type-header[data-meal-type="breakfast"]::before {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23538558'%3E%3Cpath d='M4 4h16v2H4V4zm0 3h16v2H4V7zm16 3v10H4V10h16z'/%3E%3C/svg%3E");
+      .nutrition-inputs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
       }
 
-      .meal-type-header[data-meal-type="lunch"]::before {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23538558'%3E%3Cpath d='M12 3c-4.97 0-9 2.185-9 4.875V12h18V7.875C21 5.185 16.97 3 12 3zM3 13v5.125C3 20.815 7.03 23 12 23s9-2.185 9-4.875V13H3z'/%3E%3C/svg%3E");
+      @media (max-width: 768px) {
+        .nutrition-inputs {
+          grid-template-columns: 1fr;
+        }
       }
 
-      .meal-type-header[data-meal-type="dinner"]::before {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23538558'%3E%3Cpath d='M19 3H5v2h14V3zm0 3H5v2h14V6zm0 3H5v2h14V9zm-7 3H5v2h7v-2zm0 3H5v2h7v-2zm0 3H5v2h7v-2z'/%3E%3C/svg%3E");
+      .nutrition-section {
+        background: var(--light-gray);
+        padding: 15px;
+        border-radius: var(--border-radius);
       }
 
-      .meal-type-header[data-meal-type="snacks"]::before {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23538558'%3E%3Cpath d='M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V18z'/%3E%3C/svg%3E");
+      .nutrition-section h3 {
+        margin-top: 0;
+        color: var(--primary-color);
       }
 
-      .meal-details {
+      .calculated-values {
+        background: white;
+        padding: 15px;
+        border-radius: var(--border-radius);
+        margin-top: 10px;
+      }
+
+      .calculated-values div {
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      /* Список сохраненных продуктов */
+      .saved-foods-container {
+        margin-top: 15px;
+      }
+
+      .saved-foods-search {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--medium-gray);
+        border-radius: var(--border-radius);
+        margin-bottom: 15px;
+      }
+
+      .saved-foods-list {
+        max-height: 350px;
+        overflow-y: auto;
+        background: var(--light-gray);
+        border-radius: var(--border-radius);
+        padding: 10px;
+      }
+
+      .food-item {
+        padding: 15px;
+        margin-bottom: 10px;
+        background: white;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .food-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .food-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .food-name {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--primary-color);
+      }
+
+      .food-nutrition {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        align-items: center;
+        gap: 10px;
+        font-size: 14px;
       }
 
-      .meal-details span {
+      .food-nutrition span {
+        background: rgba(83, 133, 88, 0.1);
+        padding: 5px 10px;
+        border-radius: 15px;
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 5px;
+      }
+
+      .search-results {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 10px;
+        background: white;
+        border-radius: var(--border-radius);
+        display: none;
+        box-shadow: var(--box-shadow);
+      }
+
+      .search-result-item {
+        padding: 15px;
+        border-bottom: 1px solid var(--light-gray);
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .search-result-item:hover {
+        background: var(--light-gray);
+      }
+
+      .search-result-item:last-child {
+        border-bottom: none;
+      }
+
+      .search-result-name {
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 5px;
+      }
+
+      .loading-text,
+      .no-foods {
+        padding: 30px;
+        text-align: center;
+        color: var(--dark-gray);
+      }
+
+      .loading-text i {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 25px;
+      }
+
+      .btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: var(--transition);
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background-color: var(--secondary-color);
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background-color: #8a8770;
+        transform: translateY(-2px);
+      }
+
+      .btn-outline {
+        background: none;
+        border: 1px solid var(--medium-gray);
+        color: var(--dark-color);
+      }
+
+      .btn-outline:hover {
+        background: var(--light-gray);
       }
 
       @media (max-width: 768px) {
@@ -611,17 +584,19 @@
         .calendar,
         .summary {
           width: 100%;
-          margin-right: 0;
         }
 
-        .calendar-header {
+        .modal-content {
+          padding: 20px;
+        }
+
+        .form-actions {
           flex-direction: column;
-          align-items: stretch;
+          gap: 10px;
         }
 
-        .calendar-header h2 {
-          order: -1;
-          margin-bottom: 10px;
+        .btn {
+          width: 100%;
         }
       }
     </style>
@@ -742,8 +717,8 @@
 
     <div id="meal-modal" class="modal">
       <div class="modal-content">
-        <span class="close-btn" id="closeBtn">&times;</span>
-        <h2>Add Meal</h2>
+        <button class="modal-close" id="closeBtn">&times;</button>
+        <h2 class="modal-title">Add Meal</h2>
 
         <div class="tabs">
           <button class="tab-btn active" data-tab="new-food">New Food</button>
@@ -751,69 +726,80 @@
         </div>
 
         <div class="tab-content active" id="new-food-tab">
-          <label for="meal-date">Date:</label>
-          <input type="date" id="meal-date" required />
-
-          <label for="meal-type">Meal Type:</label>
-          <select id="meal-type" required>
-            <option value="breakfast">Breakfast</option>
-            <option value="lunch">Lunch</option>
-            <option value="dinner">Dinner</option>
-            <option value="snacks">Snacks</option>
-          </select>
-
-          <label for="meal-name">Food Name:</label>
-          <div class="search-container">
-            <input
-              type="text"
-              id="meal-name"
-              placeholder="Search or enter food name"
-              required
-            />
-            <button type="button" id="search-food-btn" class="search-btn">
-              <i class="fas fa-search"></i>
-            </button>
+          <div class="form-group">
+            <label for="meal-date">Date</label>
+            <input type="date" id="meal-date" class="form-control" required />
           </div>
-          <div class="search-results" id="food-search-results"></div>
+
+          <div class="form-group">
+            <label for="meal-type">Meal Type</label>
+            <select id="meal-type" class="form-control" required>
+              <option value="breakfast">Breakfast</option>
+              <option value="lunch">Lunch</option>
+              <option value="dinner">Dinner</option>
+              <option value="snacks">Snacks</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="meal-name">Food Name</label>
+            <div class="search-container">
+              <input
+                type="text"
+                id="meal-name"
+                class="form-control"
+                placeholder="Search or enter food name"
+                required
+              />
+              <button type="button" id="search-food-btn" class="search-btn">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+            <div class="search-results" id="food-search-results"></div>
+          </div>
 
           <div class="nutrition-inputs">
-            <div class="nutrition-base">
+            <div class="nutrition-section">
               <h3>Nutrition per 100g</h3>
-              <div class="input-group">
-                <label for="base-calories">Calories:</label>
+              <div class="form-group">
+                <label for="base-calories">Calories (kcal)</label>
                 <input
                   type="number"
                   id="base-calories"
+                  class="form-control"
                   placeholder="kcal"
                   min="0"
                   step="1"
                 />
               </div>
-              <div class="input-group">
-                <label for="base-proteins">Proteins (g):</label>
+              <div class="form-group">
+                <label for="base-proteins">Proteins (g)</label>
                 <input
                   type="number"
                   id="base-proteins"
+                  class="form-control"
                   placeholder="g"
                   min="0"
                   step="0.1"
                 />
               </div>
-              <div class="input-group">
-                <label for="base-fats">Fats (g):</label>
+              <div class="form-group">
+                <label for="base-fats">Fats (g)</label>
                 <input
                   type="number"
                   id="base-fats"
+                  class="form-control"
                   placeholder="g"
                   min="0"
                   step="0.1"
                 />
               </div>
-              <div class="input-group">
-                <label for="base-carbs">Carbs (g):</label>
+              <div class="form-group">
+                <label for="base-carbs">Carbs (g)</label>
                 <input
                   type="number"
                   id="base-carbs"
+                  class="form-control"
                   placeholder="g"
                   min="0"
                   step="0.1"
@@ -821,13 +807,14 @@
               </div>
             </div>
 
-            <div class="nutrition-calculated">
+            <div class="nutrition-section">
               <h3>Calculated Values</h3>
-              <div class="input-group">
-                <label for="meal-grams">Weight (g):</label>
+              <div class="form-group">
+                <label for="meal-grams">Weight (g)</label>
                 <input
                   type="number"
                   id="meal-grams"
+                  class="form-control"
                   placeholder="grams"
                   min="1"
                   value="100"
@@ -855,25 +842,27 @@
 
         <div class="tab-content" id="saved-foods-tab">
           <div class="saved-foods-container">
-            <div class="search-container">
-              <input
-                type="text"
-                id="saved-foods-search"
-                placeholder="Search your foods..."
-              />
-            </div>
+            <input
+              type="text"
+              id="saved-foods-search"
+              class="saved-foods-search"
+              placeholder="Search your foods..."
+            />
             <div class="saved-foods-list" id="saved-foods-list">
-              <div class="loading-text">Loading your foods...</div>
+              <div class="loading-text">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading your foods...</p>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="form-actions">
-          <button id="save-meal">Save Meal</button>
-          <button id="save-new-food" class="secondary-btn">
+          <button id="save-meal" class="btn btn-primary">Save Meal</button>
+          <button id="save-new-food" class="btn btn-secondary">
             Save as New Food
           </button>
-          <button id="close-modal" class="secondary-btn">Cancel</button>
+          <button id="close-modal" class="btn btn-outline">Cancel</button>
         </div>
       </div>
     </div>
@@ -1055,9 +1044,14 @@
               const item = document.createElement("div");
               item.className = "search-result-item";
               item.innerHTML = `
-                            <strong>${food.name}</strong><br>
-                            ${food.calories} kcal/100g | P: ${food.proteins}g | F: ${food.fats}g | C: ${food.carbs}g
-                        `;
+               <div class="search-result-name">${food.name}</div>
+               <div class="food-nutrition">
+                 <span><i class="fas fa-fire"></i> ${food.calories} kcal</span>
+                 <span><i class="fas fa-dumbbell"></i> ${food.proteins}g</span>
+                 <span><i class="fas fa-bacon"></i> ${food.fats}g</span>
+                 <span><i class="fas fa-bread-slice"></i> ${food.carbs}g</span>
+               </div>
+             `;
               item.addEventListener("click", () => {
                 selectFoodFromDatabase(food);
               });
@@ -1073,47 +1067,65 @@
         }
       }
 
-      function loadUserFoods() {
+      async function loadUserFoods() {
         const foodsList = document.getElementById("saved-foods-list");
-        foodsList.innerHTML =
-          '<div class="loading-text">Loading your foods...</div>';
+        foodsList.innerHTML = `
+         <div class="loading-text">
+           <i class="fas fa-spinner fa-spin"></i>
+           <p>Loading your foods...</p>
+         </div>
+       `;
 
-        fetch("/nutrition/api/get-user-foods/", {
-          headers: {
-            "X-CSRFToken": getCookie("csrftoken"),
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.status === "success" && data.foods.length > 0) {
-              foodsList.innerHTML = "";
-              data.foods.forEach((food) => {
-                const foodItem = document.createElement("div");
-                foodItem.className = "food-item";
-                foodItem.innerHTML = `
-                            <div class="food-name">${food.name}</div>
-                            <div class="food-nutrition">
-                                <span>${food.calories} kcal</span>
-                                <span>P: ${food.proteins}g</span>
-                                <span>F: ${food.fats}g</span>
-                                <span>C: ${food.carbs}g</span>
-                            </div>
-                        `;
-                foodItem.addEventListener("click", () => {
-                  selectSavedFood(food);
-                });
-                foodsList.appendChild(foodItem);
-              });
-            } else {
-              foodsList.innerHTML =
-                '<div class="no-foods">No saved foods found. Add some first!</div>';
-            }
-          })
-          .catch((error) => {
-            console.error("Error loading foods:", error);
-            foodsList.innerHTML =
-              '<div class="no-foods">Error loading foods. Please try again.</div>';
+        try {
+          const response = await fetch("/nutrition/api/get-user-foods/", {
+            headers: {
+              "X-CSRFToken": getCookie("csrftoken"),
+            },
           });
+
+          if (!response.ok) throw new Error("Failed to load foods");
+
+          const data = await response.json();
+
+          if (data.status === "success" && data.foods.length > 0) {
+            foodsList.innerHTML = "";
+            data.foods.forEach((food) => {
+              const foodItem = document.createElement("div");
+              foodItem.className = "food-item";
+              foodItem.innerHTML = `
+               <div class="food-name">${food.name}</div>
+               <div class="food-nutrition">
+                 <span><i class="fas fa-fire"></i> ${food.calories} kcal</span>
+                 <span><i class="fas fa-dumbbell"></i> ${food.proteins}g</span>
+                 <span><i class="fas fa-bacon"></i> ${food.fats}g</span>
+                 <span><i class="fas fa-bread-slice"></i> ${food.carbs}g</span>
+               </div>
+             `;
+              foodItem.addEventListener("click", () => {
+                selectSavedFood(food);
+                document.querySelector('.tab-btn[data-tab="new-food"]').click();
+              });
+              foodsList.appendChild(foodItem);
+            });
+          } else {
+            foodsList.innerHTML = `
+             <div class="no-foods">
+               <i class="fas fa-utensils"></i>
+               <p>No saved foods found</p>
+               <p>Add some foods first!</p>
+             </div>
+           `;
+          }
+        } catch (error) {
+          console.error("Error loading foods:", error);
+          foodsList.innerHTML = `
+           <div class="no-foods">
+             <i class="fas fa-exclamation-triangle"></i>
+             <p>Error loading foods</p>
+             <p>Please try again later</p>
+           </div>
+         `;
+        }
       }
 
       function selectFoodFromDatabase(food) {
@@ -1137,9 +1149,6 @@
         document.getElementById("base-carbs").value = food.carbs;
 
         calculateNutrition();
-
-        // Switch back to new food tab
-        document.querySelector('.tab-btn[data-tab="new-food"]').click();
       }
 
       function calculateNutrition() {
@@ -1357,12 +1366,12 @@
 
         if (!meals || meals.length === 0) {
           mealsList.innerHTML = `
-                    <tr>
-                        <td colspan="2" style="text-align: center; padding: 20px; color: #666;">
-                            No meals recorded for this day
-                        </td>
-                    </tr>
-                `;
+                   <tr>
+                       <td colspan="2" style="text-align: center; padding: 20px; color: #666;">
+                           No meals recorded for this day
+                       </td>
+                   </tr>
+               `;
           return;
         }
 
@@ -1382,47 +1391,47 @@
 
           const typeRow = document.createElement("tr");
           typeRow.innerHTML = `
-                    <td colspan="2" class="meal-type-header" data-meal-type="${mealType}">
-                        ${mealType.charAt(0).toUpperCase() + mealType.slice(1)}
-                    </td>
-                `;
+                   <td colspan="2" class="meal-type-header" data-meal-type="${mealType}">
+                       ${mealType.charAt(0).toUpperCase() + mealType.slice(1)}
+                   </td>
+               `;
           mealsList.appendChild(typeRow);
 
           meals.forEach((meal) => {
             const gramsDisplay = meal.grams ? ` (${meal.grams}g)` : "";
             const mealRow = document.createElement("tr");
             mealRow.innerHTML = `
-                        <td style="font-weight: 500;">${
-                          meal.name
-                        }${gramsDisplay}</td>
-                        <td>
-                            <div class="meal-details">
-                                <span style="color: ${
-                                  meal.calories > 500
-                                    ? "var(--danger-color)"
-                                    : "var(--success-color)"
-                                }">
-                                    <i class="fas fa-fire" style="color: inherit;"></i>
-                                    ${meal.calories} kcal
-                                </span>
-                                <span>
-                                    <i class="fas fa-dumbbell" style="color: #e63946;"></i>
-                                    ${meal.proteins}g
-                                </span>
-                                <span>
-                                    <i class="fas fa-bacon" style="color: #457b9d;"></i>
-                                    ${meal.fats}g
-                                </span>
-                                <span>
-                                    <i class="fas fa-bread-slice" style="color: #2a9d8f;"></i>
-                                    ${meal.carbs}g
-                                </span>
-                                <button class="delete-meal" data-meal-id="${
-                                  meal.id
-                                }" title="Delete meal">×</button>
-                            </div>
-                        </td>
-                    `;
+                       <td style="font-weight: 500;">${
+                         meal.name
+                       }${gramsDisplay}</td>
+                       <td>
+                           <div class="meal-details">
+                               <span style="color: ${
+                                 meal.calories > 500
+                                   ? "var(--danger-color)"
+                                   : "var(--success-color)"
+                               }">
+                                   <i class="fas fa-fire" style="color: inherit;"></i>
+                                   ${meal.calories} kcal
+                               </span>
+                               <span>
+                                   <i class="fas fa-dumbbell" style="color: #e63946;"></i>
+                                   ${meal.proteins}g
+                               </span>
+                               <span>
+                                   <i class="fas fa-bacon" style="color: #457b9d;"></i>
+                                   ${meal.fats}g
+                               </span>
+                               <span>
+                                   <i class="fas fa-bread-slice" style="color: #2a9d8f;"></i>
+                                   ${meal.carbs}g
+                               </span>
+                               <button class="delete-meal" data-meal-id="${
+                                 meal.id
+                               }" title="Delete meal">×</button>
+                           </div>
+                       </td>
+                   `;
             mealsList.appendChild(mealRow);
           });
         }

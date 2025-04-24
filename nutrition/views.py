@@ -342,8 +342,9 @@ def api_save_food(request):
                 calories=data['calories'],
                 proteins=data['proteins'],
                 fats=data['fats'],
-                carbs=data['carbs']
-            )
+                carbs=data['carbs'],
+                created_by=request.user
+        )
             
             return JsonResponse({
                 'status': 'success',
@@ -397,7 +398,6 @@ def api_save_meal(request):
                 grams=data['grams']
             )
 
-            # Обновляем дневные показатели
             daily_nutrition.calories += data['calories']
             daily_nutrition.proteins += data['proteins']
             daily_nutrition.fats += data['fats']
@@ -416,8 +416,6 @@ def api_save_meal(request):
             }, status=400)
 
     return JsonResponse({'status': 'error', 'error': 'Invalid method'}, status=405)
-
-# Добавим в существующий views.py
 
 @login_required
 @csrf_exempt
