@@ -33,11 +33,12 @@
               <div class="error-messages" id="error-{{ field.name }}"></div>
             </div>
             {% endfor %}
-
             <button class="cta-button" type="submit">Sign Up</button>
           </form>
 
-          <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+          <p class="login-link">
+            Already have an account? <a href="{% url 'login' %}">Log in</a>
+          </p>
         </div>
       </div>
     </div>
@@ -80,7 +81,6 @@
 
         emailInput.addEventListener("input", function () {
           const email = emailInput.value;
-
           if (email.length > 3) {
             fetch(`/users/check-email/?email=${email}`)
               .then((response) => response.json())

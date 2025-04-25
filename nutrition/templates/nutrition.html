@@ -11,6 +11,9 @@
     />
     <title>Calories Counter</title>
     <style>
+      header {
+        height: 60px;
+      }
       :root {
         --primary-color: #538558;
         --primary-dark: #3a6a3d;
@@ -260,14 +263,26 @@
       }
 
       .modal-content {
-        background-color: white;
+        background-color: #fff;
         margin: 20px auto;
-        padding: 30px;
-        border-radius: var(--border-radius);
+        padding: 25px;
+        border-radius: 15px;
         width: 90%;
-        max-width: 600px;
-        box-shadow: var(--box-shadow);
+        max-width: 700px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
         position: relative;
+        animation: fadeIn 0.3s ease;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .modal-content-inner {
+        overflow-y: auto;
+        flex: 1;
+        padding: 5px 10px;
+        margin-right: -10px; /* Компенсируем padding для scrollbar */
+        padding-right: 10px;
       }
 
       .modal-close {
@@ -278,41 +293,43 @@
         border: none;
         font-size: 1.5rem;
         cursor: pointer;
-        color: var(--dark-gray);
-        transition: var(--transition);
+        color: #777;
+        transition: color 0.3s;
       }
 
       .modal-close:hover {
-        color: var(--dark-color);
+        color: #333;
       }
 
       .modal-title {
         margin-top: 0;
-        color: var(--primary-color);
-        padding-bottom: 10px;
-        border-bottom: 1px solid var(--medium-gray);
+        color: #538558;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+        font-size: 1.8rem;
+        text-align: center;
       }
 
       .tabs {
         display: flex;
-        margin-bottom: 20px;
-        border-bottom: 2px solid var(--medium-gray);
+        margin-bottom: 25px;
+        border-bottom: 2px solid #f0f0f0;
       }
 
       .tab-btn {
-        padding: 12px 20px;
+        padding: 12px 25px;
         background: none;
         border: none;
         cursor: pointer;
         font-size: 16px;
-        color: var(--dark-gray);
+        color: #777;
         position: relative;
         font-weight: 500;
-        transition: var(--transition);
+        transition: all 0.3s;
       }
 
       .tab-btn.active {
-        color: var(--primary-color);
+        color: #538558;
         font-weight: 600;
       }
 
@@ -323,51 +340,35 @@
         left: 0;
         width: 100%;
         height: 3px;
-        background-color: var(--primary-color);
-      }
-
-      .tab-content {
-        display: none;
-        animation: fadeIn 0.3s ease;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-
-      .tab-content.active {
-        display: block;
+        background-color: #538558;
       }
 
       .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 15px;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background-color: #fff;
+        box-sizing: border-box;
       }
 
       .form-group label {
         display: block;
         margin-bottom: 8px;
         font-weight: 500;
-        color: var(--dark-color);
-      }
-
-      .form-control {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid var(--medium-gray);
-        border-radius: var(--border-radius);
-        font-size: 1rem;
-        transition: var(--transition);
+        color: #444;
       }
 
       .form-control:focus {
-        border-color: var(--primary-color);
+        border-color: #538558;
         outline: none;
         box-shadow: 0 0 0 3px rgba(83, 133, 88, 0.2);
+        background-color: #fff;
       }
 
       .search-container {
@@ -397,31 +398,79 @@
         }
       }
 
+      #new-food-tab {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .nutrition-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 10px;
+      }
+
+      @media (max-width: 768px) {
+        .nutrition-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
       .nutrition-section {
-        background: var(--light-gray);
+        background: #f9f9f9;
         padding: 15px;
-        border-radius: var(--border-radius);
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .nutrition-section h3 {
         margin-top: 0;
-        color: var(--primary-color);
+        color: #538558;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 15px;
+      }
+
+      .nutrition-section h3 i {
+        color: #a8a48c;
       }
 
       .calculated-values {
         background: white;
-        padding: 15px;
-        border-radius: var(--border-radius);
+        padding: 12px;
+        border-radius: 8px;
         margin-top: 10px;
       }
 
-      .calculated-values div {
-        margin-bottom: 8px;
+      .calculated-item {
         display: flex;
         justify-content: space-between;
+        padding: 6px 0;
+        font-size: 0.95rem;
       }
 
-      /* Список сохраненных продуктов */
+      .calculated-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+
+      .calculated-item span:first-child {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #555;
+      }
+
+      .calculated-item span:last-child {
+        font-weight: 600;
+        color: #538558;
+      }
+
       .saved-foods-container {
         margin-top: 15px;
       }
@@ -488,20 +537,21 @@
         overflow-y: auto;
         margin-top: 10px;
         background: white;
-        border-radius: var(--border-radius);
+        border-radius: 8px;
         display: none;
-        box-shadow: var(--box-shadow);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid #eee;
       }
 
       .search-result-item {
         padding: 15px;
-        border-bottom: 1px solid var(--light-gray);
+        border-bottom: 1px solid #f0f0f0;
         cursor: pointer;
-        transition: var(--transition);
+        transition: all 0.2s;
       }
 
       .search-result-item:hover {
-        background: var(--light-gray);
+        background: #f9f9f9;
       }
 
       .search-result-item:last-child {
@@ -510,7 +560,7 @@
 
       .search-result-name {
         font-weight: 600;
-        color: var(--primary-color);
+        color: #538558;
         margin-bottom: 5px;
       }
 
@@ -533,71 +583,252 @@
         justify-content: flex-end;
         gap: 15px;
         margin-top: 25px;
+        flex-wrap: wrap;
+      }
+
+      #saved-foods-tab {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      #saved-foods-tab .saved-foods-search {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        font-size: 1rem;
+      }
+
+      #saved-foods-tab .saved-foods-list {
+        max-height: 300px;
+        overflow-y: auto;
+        background: #f9f9f9;
+        border-radius: 8px;
+        padding: 10px;
+      }
+
+      #saved-foods-tab .food-item {
+        padding: 12px;
+        margin-bottom: 10px;
+        background: white;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      #saved-foods-tab .food-item:hover {
+        background: #f0f0f0;
+      }
+
+      #saved-foods-tab .food-name {
+        font-weight: 600;
+        color: #538558;
+        margin-bottom: 5px;
+      }
+
+      #saved-foods-tab .food-nutrition {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        font-size: 0.9rem;
+      }
+
+      #saved-foods-tab .food-nutrition span {
+        background: rgba(83, 133, 88, 0.1);
+        padding: 4px 8px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .tabs {
+        display: flex;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .tab-btn {
+        padding: 10px 20px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        color: #777;
+        position: relative;
+      }
+
+      .tab-btn.active {
+        color: #538558;
+        font-weight: 600;
+      }
+
+      .tab-btn.active::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #538558;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
       }
 
       .btn {
-        padding: 12px 25px;
-        border: none;
-        border-radius: var(--border-radius);
-        cursor: pointer;
-        font-size: 1rem;
-        font-weight: 600;
-        transition: var(--transition);
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        min-width: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
       }
 
       .btn-primary {
-        background-color: var(--primary-color);
+        background-color: #538558;
         color: white;
-      }
-
-      .btn-primary:hover {
-        background-color: var(--primary-dark);
-        transform: translateY(-2px);
       }
 
       .btn-secondary {
-        background-color: var(--secondary-color);
+        background-color: #a8a48c;
         color: white;
-      }
-
-      .btn-secondary:hover {
-        background-color: #8a8770;
-        transform: translateY(-2px);
       }
 
       .btn-outline {
         background: none;
-        border: 1px solid var(--medium-gray);
-        color: var(--dark-color);
+        border: 1px solid #ddd;
+        color: #555;
       }
 
-      .btn-outline:hover {
-        background: var(--light-gray);
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
-      @media (max-width: 768px) {
-        .container {
-          flex-direction: column;
-          padding: 15px;
-        }
+      .fas {
+        font-size: 0.9em;
+      }
 
-        .calendar,
-        .summary {
-          width: 100%;
-        }
+      .workout-recommendation-info {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
 
-        .modal-content {
-          padding: 20px;
-        }
+      .workout-recommendation-info p {
+        margin: 0 0 10px;
+        font-size: 1.1rem;
+      }
 
-        .form-actions {
-          flex-direction: column;
-          gap: 10px;
-        }
+      .calories-burn-info {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #538558;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
 
-        .btn {
-          width: 100%;
-        }
+      .recommended-workouts {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .workout-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+      }
+
+      .workout-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .workout-thumbnail {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        background: #f0f0f0;
+      }
+
+      .workout-thumbnail img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .workout-play-btn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(83, 133, 88, 0.8);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        border: none;
+      }
+
+      .workout-details {
+        padding: 15px;
+      }
+
+      .workout-title {
+        font-weight: 600;
+        margin: 0 0 5px;
+        color: #333;
+      }
+
+      .workout-trainer {
+        font-size: 0.9rem;
+        color: #777;
+        margin: 0 0 10px;
+      }
+
+      .workout-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: #555;
+      }
+
+      .workout-calories {
+        color: #538558;
+        font-weight: 600;
       }
     </style>
   </head>
@@ -725,144 +956,164 @@
           <button class="tab-btn" data-tab="saved-foods">My Foods</button>
         </div>
 
-        <div class="tab-content active" id="new-food-tab">
-          <div class="form-group">
-            <label for="meal-date">Date</label>
-            <input type="date" id="meal-date" class="form-control" required />
-          </div>
-
-          <div class="form-group">
-            <label for="meal-type">Meal Type</label>
-            <select id="meal-type" class="form-control" required>
-              <option value="breakfast">Breakfast</option>
-              <option value="lunch">Lunch</option>
-              <option value="dinner">Dinner</option>
-              <option value="snacks">Snacks</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="meal-name">Food Name</label>
-            <div class="search-container">
-              <input
-                type="text"
-                id="meal-name"
-                class="form-control"
-                placeholder="Search or enter food name"
-                required
-              />
-              <button type="button" id="search-food-btn" class="search-btn">
-                <i class="fas fa-search"></i>
-              </button>
-            </div>
-            <div class="search-results" id="food-search-results"></div>
-          </div>
-
-          <div class="nutrition-inputs">
-            <div class="nutrition-section">
-              <h3>Nutrition per 100g</h3>
-              <div class="form-group">
-                <label for="base-calories">Calories (kcal)</label>
-                <input
-                  type="number"
-                  id="base-calories"
-                  class="form-control"
-                  placeholder="kcal"
-                  min="0"
-                  step="1"
-                />
-              </div>
-              <div class="form-group">
-                <label for="base-proteins">Proteins (g)</label>
-                <input
-                  type="number"
-                  id="base-proteins"
-                  class="form-control"
-                  placeholder="g"
-                  min="0"
-                  step="0.1"
-                />
-              </div>
-              <div class="form-group">
-                <label for="base-fats">Fats (g)</label>
-                <input
-                  type="number"
-                  id="base-fats"
-                  class="form-control"
-                  placeholder="g"
-                  min="0"
-                  step="0.1"
-                />
-              </div>
-              <div class="form-group">
-                <label for="base-carbs">Carbs (g)</label>
-                <input
-                  type="number"
-                  id="base-carbs"
-                  class="form-control"
-                  placeholder="g"
-                  min="0"
-                  step="0.1"
-                />
-              </div>
-            </div>
-
-            <div class="nutrition-section">
-              <h3>Calculated Values</h3>
-              <div class="form-group">
-                <label for="meal-grams">Weight (g)</label>
-                <input
-                  type="number"
-                  id="meal-grams"
-                  class="form-control"
-                  placeholder="grams"
-                  min="1"
-                  value="100"
-                />
-              </div>
-              <div class="calculated-values">
-                <div>
-                  <span>Calories:</span>
-                  <span id="calculated-calories">0</span> kcal
-                </div>
-                <div>
-                  <span>Proteins:</span>
-                  <span id="calculated-proteins">0</span> g
-                </div>
-                <div>
-                  <span>Fats:</span> <span id="calculated-fats">0</span> g
-                </div>
-                <div>
-                  <span>Carbs:</span> <span id="calculated-carbs">0</span> g
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="modal-content-inner">
+<div class="tab-content active" id="new-food-tab">
+  <div class="form-group">
+    <label for="meal-date">Date</label>
+    <input type="date" id="meal-date" class="form-control" required />
+  </div>
+  <div class="form-group">
+    <label for="meal-type">Meal Type</label>
+    <select id="meal-type" class="form-control" required>
+      <option value="breakfast">Breakfast</option>
+      <option value="lunch">Lunch</option>
+      <option value="dinner">Dinner</option>
+      <option value="snacks">Snacks</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="meal-name">Food Name</label>
+    <div class="search-container">
+      <input
+        type="text"
+        id="meal-name"
+        class="form-control"
+        placeholder="Search or enter food name"
+        required
+      />
+      <button type="button" id="search-food-btn" class="search-btn">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+    <div class="search-results" id="food-search-results"></div>
+  </div>
+  <div class="nutrition-grid">
+    <div class="nutrition-section">
+      <h3><i class="fas fa-utensils"></i> Nutrition per 100g</h3>
+      <div class="form-group">
+        <label for="base-calories"><i class="fas fa-fire"></i> Calories (kcal)</label>
+        <input
+          type="number"
+          id="base-calories"
+          class="form-control"
+          placeholder="kcal"
+          min="0"
+          step="1"
+        />
+      </div>
+      <div class="form-group">
+        <label for="base-proteins"><i class="fas fa-dumbbell"></i> Proteins (g)</label>
+        <input
+          type="number"
+          id="base-proteins"
+          class="form-control"
+          placeholder="g"
+          min="0"
+          step="0.1"
+        />
+      </div>
+      <div class="form-group">
+        <label for="base-fats"><i class="fas fa-bacon"></i> Fats (g)</label>
+        <input
+          type="number"
+          id="base-fats"
+          class="form-control"
+          placeholder="g"
+          min="0"
+          step="0.1"
+        />
+      </div>
+      <div class="form-group">
+        <label for="base-carbs"><i class="fas fa-bread-slice"></i> Carbs (g)</label>
+        <input
+          type="number"
+          id="base-carbs"
+          class="form-control"
+          placeholder="g"
+          min="0"
+          step="0.1"
+        />
+      </div>
+    </div>
+    <div class="nutrition-section">
+      <h3><i class="fas fa-calculator"></i> Calculated Values</h3>
+      <div class="form-group">
+        <label for="meal-grams"><i class="fas fa-weight"></i> Weight (g)</label>
+        <input
+          type="number"
+          id="meal-grams"
+          class="form-control"
+          placeholder="grams"
+          min="1"
+          value="100"
+        />
+      </div>
+      <div class="calculated-values">
+        <div class="calculated-item">
+          <span><i class="fas fa-fire"></i> Calories:</span>
+          <span id="calculated-calories">0</span> kcal
         </div>
-
-        <div class="tab-content" id="saved-foods-tab">
-          <div class="saved-foods-container">
-            <input
-              type="text"
-              id="saved-foods-search"
-              class="saved-foods-search"
-              placeholder="Search your foods..."
-            />
-            <div class="saved-foods-list" id="saved-foods-list">
-              <div class="loading-text">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Loading your foods...</p>
-              </div>
-            </div>
-          </div>
+        <div class="calculated-item">
+          <span><i class="fas fa-dumbbell"></i> Proteins:</span>
+          <span id="calculated-proteins">0</span> g
         </div>
+        <div class="calculated-item">
+          <span><i class="fas fa-bacon"></i> Fats:</span>
+          <span id="calculated-fats">0</span> g
+        </div>
+        <div class="calculated-item">
+          <span><i class="fas fa-bread-slice"></i> Carbs:</span>
+          <span id="calculated-carbs">0</span> g
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-content" id="saved-foods-tab">
+  <div class="saved-foods-container">
+    <div class="form-group">
+      <label for="saved-foods-search">Search My Foods</label>
+      <input
+        type="text"
+        id="saved-foods-search"
+        class="form-control"
+        placeholder="Search your foods..."
+      />
+    </div>
+    
+    <div class="saved-foods-section">
+      <h3><i class="fas fa-utensils"></i> My Foods</h3>
+      <div class="saved-foods-list" id="saved-foods-list">
+        <div class="loading-text">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading your foods...</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="saved-meals-section">
+      <h3><i class="fas fa-list"></i> My Meals</h3>
+      <div class="saved-meals-list" id="saved-meals-list">
+        <div class="loading-text">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading your meals...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
         <div class="form-actions">
-          <button id="save-meal" class="btn btn-primary">Save Meal</button>
-          <button id="save-new-food" class="btn btn-secondary">
-            Save as New Food
+          <button id="save-meal" class="btn btn-primary">
+            <i class="fas fa-save"></i> Save Meal
           </button>
-          <button id="close-modal" class="btn btn-outline">Cancel</button>
+          <button id="save-new-food" class="btn btn-secondary">
+            <i class="fas fa-plus-circle"></i> Save as New Food
+          </button>
+          <button id="close-modal" class="btn btn-outline">
+            <i class="fas fa-times"></i> Cancel
+          </button>
         </div>
       </div>
     </div>
@@ -946,20 +1197,20 @@
 
         document.querySelectorAll(".tab-btn").forEach((btn) => {
           btn.addEventListener("click", () => {
-            document
-              .querySelectorAll(".tab-btn")
-              .forEach((b) => b.classList.remove("active"));
-            document
-              .querySelectorAll(".tab-content")
-              .forEach((c) => c.classList.remove("active"));
+            document.querySelectorAll(".tab-btn").forEach((b) => {
+              b.classList.remove("active");
+            });
+            document.querySelectorAll(".tab-content").forEach((c) => {
+              c.classList.remove("active");
+            });
 
             btn.classList.add("active");
-            document
-              .getElementById(`${btn.dataset.tab}-tab`)
-              .classList.add("active");
+            const tabId = btn.getAttribute("data-tab") + "-tab";
+            document.getElementById(tabId).classList.add("active");
 
-            if (btn.dataset.tab === "saved-foods") {
+            if (btn.getAttribute("data-tab") === "saved-foods") {
               loadUserFoods();
+              loadUserMeals();
             }
           });
         });
@@ -1067,64 +1318,65 @@
         }
       }
 
-      async function loadUserFoods() {
-        const foodsList = document.getElementById("saved-foods-list");
-        foodsList.innerHTML = `
-         <div class="loading-text">
-           <i class="fas fa-spinner fa-spin"></i>
-           <p>Loading your foods...</p>
-         </div>
-       `;
-
+      async function loadUserMeals() {
+        const mealsList = document.getElementById("saved-meals-list");
+        mealsList.innerHTML = `
+          <div class="loading-text">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading your meals...</p>
+          </div>
+        `;
+        
         try {
-          const response = await fetch("/nutrition/api/get-user-foods/", {
+          const response = await fetch("/nutrition/api/get-user-meals/", {
             headers: {
               "X-CSRFToken": getCookie("csrftoken"),
             },
           });
-
-          if (!response.ok) throw new Error("Failed to load foods");
-
+          
+          if (!response.ok) throw new Error("Failed to load meals");
           const data = await response.json();
-
-          if (data.status === "success" && data.foods.length > 0) {
-            foodsList.innerHTML = "";
-            data.foods.forEach((food) => {
-              const foodItem = document.createElement("div");
-              foodItem.className = "food-item";
-              foodItem.innerHTML = `
-               <div class="food-name">${food.name}</div>
-               <div class="food-nutrition">
-                 <span><i class="fas fa-fire"></i> ${food.calories} kcal</span>
-                 <span><i class="fas fa-dumbbell"></i> ${food.proteins}g</span>
-                 <span><i class="fas fa-bacon"></i> ${food.fats}g</span>
-                 <span><i class="fas fa-bread-slice"></i> ${food.carbs}g</span>
-               </div>
-             `;
-              foodItem.addEventListener("click", () => {
-                selectSavedFood(food);
+          
+          if (data.status === "success" && data.meals.length > 0) {
+            mealsList.innerHTML = "";
+            data.meals.forEach((meal) => {
+              const mealItem = document.createElement("div");
+              mealItem.className = "food-item";
+              mealItem.innerHTML = `
+                <div class="food-name">${meal.name}</div>
+                <div class="food-nutrition">
+                  <span><i class="fas fa-fire"></i> ${meal.calories} kcal</span>
+                  <span><i class="fas fa-dumbbell"></i> ${meal.proteins}g</span>
+                  <span><i class="fas fa-bacon"></i> ${meal.fats}g</span>
+                  <span><i class="fas fa-bread-slice"></i> ${meal.carbs}g</span>
+                </div>
+                <div class="meal-meta">
+                  <span><i class="fas fa-utensils"></i> ${meal.meal_type}</span>
+                  <span><i class="fas fa-weight"></i> ${meal.grams}g</span>
+                </div>
+              `;
+              mealItem.addEventListener("click", () => {
+                selectSavedMeal(meal);
                 document.querySelector('.tab-btn[data-tab="new-food"]').click();
               });
-              foodsList.appendChild(foodItem);
+              mealsList.appendChild(mealItem);
             });
           } else {
-            foodsList.innerHTML = `
-             <div class="no-foods">
-               <i class="fas fa-utensils"></i>
-               <p>No saved foods found</p>
-               <p>Add some foods first!</p>
-             </div>
-           `;
+            mealsList.innerHTML = `
+              <div class="no-foods">
+                <i class="fas fa-utensils"></i>
+                <p>No saved meals found</p>
+              </div>
+            `;
           }
         } catch (error) {
-          console.error("Error loading foods:", error);
-          foodsList.innerHTML = `
-           <div class="no-foods">
-             <i class="fas fa-exclamation-triangle"></i>
-             <p>Error loading foods</p>
-             <p>Please try again later</p>
-           </div>
-         `;
+          console.error("Error loading meals:", error);
+          mealsList.innerHTML = `
+            <div class="no-foods">
+              <i class="fas fa-exclamation-triangle"></i>
+              <p>Error loading meals</p>
+            </div>
+          `;
         }
       }
 
@@ -1140,14 +1392,17 @@
         calculateNutrition();
       }
 
-      function selectSavedFood(food) {
-        selectedFood = food;
-        document.getElementById("meal-name").value = food.name;
-        document.getElementById("base-calories").value = food.calories;
-        document.getElementById("base-proteins").value = food.proteins;
-        document.getElementById("base-fats").value = food.fats;
-        document.getElementById("base-carbs").value = food.carbs;
+      function selectSavedMeal(meal) {
+        document.getElementById("meal-type").value = meal.meal_type;
+        document.getElementById("meal-name").value = meal.name;
+        document.getElementById("meal-grams").value = meal.grams;
 
+        const factor = 100 / meal.grams;
+        document.getElementById("base-calories").value = Math.round(meal.calories * factor);
+        document.getElementById("base-proteins").value = (meal.proteins * factor).toFixed(1);
+        document.getElementById("base-fats").value = (meal.fats * factor).toFixed(1);
+        document.getElementById("base-carbs").value = (meal.carbs * factor).toFixed(1);
+        
         calculateNutrition();
       }
 
@@ -1561,10 +1816,157 @@
 
         if (percentage > 100) {
           circle.style.borderColor = "var(--danger-color)";
+          showWorkoutsForExtraCalories(totalCalories - goalCalories);
         } else if (percentage > 75) {
           circle.style.borderColor = "var(--warning-color)";
         } else {
           circle.style.borderColor = "var(--primary-color)";
+        }
+      }
+      function showWorkoutRecommendations(excessCalories) {
+        const modal = document.getElementById("workout-recommendation-modal");
+        const excessCaloriesEl = document.getElementById("excess-calories");
+        const estimatedBurnEl = document.getElementById("estimated-burn");
+        const workoutsContainer = document.getElementById(
+          "recommended-workouts"
+        );
+
+        const estimatedBurn = Math.round(excessCalories * 1.2);
+        const workoutDuration = Math.round((excessCalories / 500) * 60);
+
+        excessCaloriesEl.textContent = excessCalories;
+        estimatedBurnEl.textContent = estimatedBurn;
+
+        workoutsContainer.innerHTML = `
+          <div class="loading-text">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading recommended workouts...</p>
+          </div>
+        `;
+
+        modal.style.display = "flex";
+
+        const workoutQueries = [
+          `${workoutDuration} minute cardio workout`,
+          `${workoutDuration} minute HIIT workout`,
+          `${workoutDuration} minute fat burning workout`,
+        ];
+
+        setTimeout(() => {
+          const sampleWorkouts = [
+            {
+              title: "30 Minute Fat Burning HIIT Workout",
+              video_url: "https://www.youtube.com/watch?v=example1",
+              embed_url: "https://www.youtube.com/embed/example1",
+              thumbnail: "https://i.ytimg.com/vi/example1/hqdefault.jpg",
+              duration: 1800,
+              calories: 350,
+              trainer: "Fitness Trainer",
+            },
+            {
+              title: "Cardio Blast Workout - Burn 400 Calories",
+              video_url: "https://www.youtube.com/watch?v=example2",
+              embed_url: "https://www.youtube.com/embed/example2",
+              thumbnail: "https://i.ytimg.com/vi/example2/hqdefault.jpg",
+              duration: 2400,
+              calories: 400,
+              trainer: "Cardio Expert",
+            },
+            {
+              title: "Dance Workout to Burn Calories",
+              video_url: "https://www.youtube.com/watch?v=example3",
+              embed_url: "https://www.youtube.com/embed/example3",
+              thumbnail: "https://i.ytimg.com/vi/example3/hqdefault.jpg",
+              duration: 1800,
+              calories: 300,
+              trainer: "Dance Instructor",
+            },
+          ];
+
+          renderWorkoutRecommendations(sampleWorkouts);
+        }, 1500);
+
+        document
+          .getElementById("closeWorkoutModal")
+          .addEventListener("click", () => {
+            modal.style.display = "none";
+          });
+
+        document
+          .getElementById("close-workout-modal")
+          .addEventListener("click", () => {
+            modal.style.display = "none";
+          });
+
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) {
+            modal.style.display = "none";
+          }
+        });
+      }
+
+      function renderWorkoutRecommendations(workouts) {
+        const container = document.getElementById("recommended-workouts");
+
+        if (!workouts || workouts.length === 0) {
+          container.innerHTML = `
+            <div class="no-workouts">
+              <i class="fas fa-exclamation-circle"></i>
+              <p>No workout recommendations available</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = workouts
+          .map(
+            (workout) => `
+          <div class="workout-card">
+            <div class="workout-thumbnail">
+              <img src="${workout.thumbnail}" alt="${workout.title}">
+              <button class="workout-play-btn" data-video-url="${
+                workout.embed_url
+              }">
+                <i class="fas fa-play"></i>
+              </button>
+            </div>
+            <div class="workout-details">
+              <h3 class="workout-title">${workout.title}</h3>
+              <p class="workout-trainer">by ${workout.trainer}</p>
+              <div class="workout-meta">
+                <span>${formatDuration(workout.duration)}</span>
+                <span class="workout-calories">~${workout.calories} cal</span>
+              </div>
+            </div>
+          </div>
+        `
+          )
+          .join("");
+
+        document.querySelectorAll(".workout-play-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const videoUrl = btn.getAttribute("data-video-url");
+            window.open(videoUrl, "_blank");
+          });
+        });
+      }
+
+      function formatDuration(seconds) {
+        const mins = Math.floor(seconds / 60);
+        return `${mins} min`;
+      }
+
+      function checkForExcessCalories() {
+        const totalCalories =
+          parseInt(document.getElementById("total-calories").textContent) || 0;
+        const goalCalories =
+          parseInt(document.getElementById("goal-calories").textContent) || 0;
+
+        if (totalCalories > goalCalories) {
+          const excess = totalCalories - goalCalories;
+          if (excess > 200) {
+            showWorkoutRecommendations(excess);
+          }
         }
       }
 

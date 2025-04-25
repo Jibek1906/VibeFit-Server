@@ -458,3 +458,4 @@ def api_get_user_foods(request):
         except Exception as e:
             return JsonResponse({'status': 'error', 'error': str(e)}, status=400)
     return JsonResponse({'status': 'error', 'error': 'Invalid method'}, status=405)
+

@@ -19,24 +19,20 @@
       }
 
       .page-container {
-        position: relative;
         min-height: 100vh;
-        padding: 60px 20px;
         display: flex;
-        justify-content: center;
         align-items: center;
-        z-index: 1;
+        justify-content: center;
+        padding: 40px 20px;
+        position: relative;
       }
 
       .page-container::before {
         content: "";
         position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
+        inset: 0;
         background: url("{% static 'img/background.jpg' %}") no-repeat center
-          center/cover;
+          center / cover;
         filter: blur(10px);
         z-index: -1;
       }
@@ -44,121 +40,110 @@
       .registration-container {
         width: 100%;
         max-width: 600px;
-        background-color: rgba(255, 255, 255);
+        background-color: rgba(255, 255, 255, 0.95);
         border-radius: 30px;
         padding: 40px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
       }
 
       .form-container {
-        width: 100%;
         text-align: center;
       }
 
       .form-container h1 {
-        text-align: center;
         font-size: 24px;
-        margin-bottom: 25px;
+        margin-bottom: 30px;
         color: #333;
         font-weight: bold;
       }
 
       .form-field {
-        margin-bottom: 15px;
-        width: 100%;
+        margin-bottom: 20px;
+        text-align: left;
       }
 
       .form-field label {
         display: block;
-        margin-bottom: 5px;
-        color: #444;
+        margin-bottom: 8px;
         font-size: 14px;
+        color: #444;
         padding-left: 10px;
       }
 
       .form-field input,
       .form-field select {
         width: 100%;
-        padding: 20px;
+        padding: 18px 20px;
         font-size: 16px;
         border-radius: 30px;
         border: 1px solid #ccc;
-        background: #ebeade;
+        background-color: #ebeade;
         color: #333;
-        text-align: left;
-        transition: all 0.2s ease;
+        transition: 0.2s ease-in-out;
       }
 
       .form-field input:focus,
       .form-field select:focus {
-        border-color: #4285f4;
         outline: none;
-        background: #fff;
+        border-color: #538558;
+        background-color: #fff;
       }
 
       input::placeholder {
-        color: #888;
-        text-align: left;
+        color: #999;
         font-size: 16px;
       }
 
       select {
         appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='gray' stroke-width='2' viewBox='0 0 24 24'><path d='M6 9l6 6 6-6'/></svg>");
         background-repeat: no-repeat;
-        background-position: right 15px center;
-        background-size: 15px;
-      }
-
-      input[type="number"]::-webkit-inner-spin-button,
-      input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
-
-      input[type="number"] {
-        -moz-appearance: textfield;
-        appearance: none;
+        background-position: right 1.2rem center;
+        background-size: 1rem;
       }
 
       .save-button {
         width: 100%;
         padding: 20px;
         font-size: 16px;
+        font-weight: bold;
+        color: white;
+        background-color: #538558;
         border: none;
         border-radius: 30px;
-        background-color: #538558;
-        color: white;
-        font-weight: bold;
         cursor: pointer;
         transition: background-color 0.3s ease;
       }
 
       .save-button:hover {
-        background-color: #bebbae;
+        background-color: #4a6f4e;
       }
 
       .error-messages p {
         color: red;
         font-size: 12px;
-        margin: 5px 0;
+        margin-top: 5px;
+        margin-left: 10px;
       }
 
-      .save-button {
-        margin-top: 20px;
-        width: 100%;
-        padding: 25px;
-        margin-top: 20px;
-        border: none;
-        border-radius: 30px;
-        background-color: #538558;
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background-color 0.3s ease;
+      @media (max-width: 640px) {
+        .registration-container {
+          padding: 30px 20px;
+        }
+
+        .form-container h1 {
+          font-size: 20px;
+        }
+
+        .form-field input,
+        .form-field select {
+          padding: 16px;
+          font-size: 15px;
+        }
+
+        .save-button {
+          padding: 18px;
+        }
       }
     </style>
   </head>
