@@ -1,0 +1,550 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About VibeFit</title>
+    <link rel="stylesheet" href="{% static 'css/main_page.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #538558;
+        --secondary: #a8a48c;
+        --light-bg: #ebeade;
+        --dark-text: #333333;
+        --light-text: #666666;
+      }
+
+      .header {
+        height: 60px;
+        background-color: #a8a48c;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        position: relative;
+      }
+
+      .logo {
+        font-size: 34px;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      .logo span {
+        color: #e0decc;
+      }
+
+      .header nav ul {
+        display: flex;
+        list-style: none;
+      }
+
+      .header nav ul li {
+        margin-right: 20px;
+      }
+
+      .header nav ul li a {
+        color: #fff;
+        font-size: 18px;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .header nav ul li h2 {
+        margin: 0;
+        font-size: 18px;
+        color: #fff;
+        font-family: Arial, sans-serif;
+      }
+
+      .burger-menu {
+        display: none;
+        cursor: pointer;
+        font-size: 34px;
+        color: white;
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .mobile-nav {
+        display: none;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background-color: #a8a48c;
+        z-index: 1000;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .mobile-nav.active {
+        display: block;
+      }
+
+      .mobile-nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .mobile-nav ul li {
+        margin-bottom: 15px;
+      }
+
+      .mobile-nav ul li a {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .mobile-nav ul li h2 {
+        margin: 0;
+        font-size: 18px;
+        color: #fff;
+        font-family: Arial, sans-serif;
+      }
+
+      .about-container {
+        max-width: 1200px;
+        margin: 60px auto;
+        padding: 0 20px;
+      }
+
+      .hero-section {
+        display: flex;
+        align-items: center;
+        gap: 50px;
+        margin-bottom: 80px;
+      }
+
+      .hero-content {
+        flex: 1;
+      }
+
+      .hero-image {
+        flex: 1;
+        position: relative;
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 15px 15px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .hero-image img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: transform 0.5s ease;
+      }
+
+      .hero-image:hover img {
+        transform: scale(1.03);
+      }
+
+      .section-title {
+        font-size: 42px;
+        color: var(--dark-text);
+        margin-bottom: 30px;
+        position: relative;
+        display: inline-block;
+      }
+
+      .section-title:after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 70px;
+        height: 4px;
+        background: var(--primary);
+      }
+
+      .mission-statement {
+        font-size: 20px;
+        line-height: 1.6;
+        color: var(--light-text);
+        margin-bottom: 40px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        margin: 60px 0;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-10px);
+      }
+
+      .stat-number {
+        font-size: 48px;
+        font-weight: bold;
+        color: var(--primary);
+        margin-bottom: 10px;
+      }
+
+      .features-section {
+        background: var(--light-bg);
+        border-radius: 30px;
+        padding: 80px 60px;
+        margin: 80px 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .features-section:before {
+        content: "";
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 200px;
+        height: 200px;
+        background: rgba(83, 133, 88, 0.1);
+        border-radius: 50%;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px;
+        margin-top: 60px;
+      }
+
+      .feature-card {
+        background: white;
+        padding: 40px 30px;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+        transition: all 0.3s ease;
+        border-bottom: 4px solid transparent;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        border-color: var(--primary);
+      }
+
+      .feature-icon {
+        font-size: 36px;
+        color: var(--primary);
+        margin-bottom: 20px;
+      }
+
+      .feature-title {
+        font-size: 22px;
+        color: var(--dark-text);
+        margin-bottom: 15px;
+      }
+
+      .testimonial-section {
+        margin: 100px 0;
+        text-align: center;
+      }
+
+      .testimonial {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 50px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        position: relative;
+      }
+
+      .testimonial:before {
+        content: '"';
+        position: absolute;
+        top: 20px;
+        left: 30px;
+        font-size: 100px;
+        color: rgba(83, 133, 88, 0.1);
+        font-family: serif;
+      }
+
+      .testimonial-text {
+        font-size: 20px;
+        font-style: italic;
+        color: var(--light-text);
+        line-height: 1.6;
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .testimonial-author {
+        font-weight: bold;
+        color: var(--primary);
+      }
+
+      .footer {
+        margin-top: 30px;
+        text-align: center;
+        padding: 10px;
+        background-color: #a8a48c;
+        color: #fff;
+        font-size: 14px;
+      }
+
+      .cta-button {
+        padding: 15px 50px;
+        background-color: #538558;
+        color: #fff;
+        font-size: 18px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        border-radius: 40px;
+        transition: background-color 0.3s ease;
+      }
+
+      .cta-button:hover {
+        background-color: #3a6a3d;
+      }
+
+      @media (max-width: 768px) {
+        .header nav {
+          display: none;
+        }
+
+        .burger-menu {
+          display: block;
+        }
+
+        .logo {
+          font-size: 28px;
+        }
+
+        .hero-section {
+          flex-direction: column;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .features-section {
+          padding: 50px 30px;
+        }
+
+        .section-title {
+          font-size: 32px;
+        }
+
+        .mission-statement {
+          font-size: 16px;
+        }
+
+        .stat-card {
+          padding: 20px;
+        }
+
+        .stat-number {
+          font-size: 36px;
+        }
+
+        .feature-card {
+          padding: 30px 20px;
+        }
+
+        .feature-title {
+          font-size: 18px;
+        }
+
+        .testimonial {
+          padding: 30px 20px;
+        }
+
+        .testimonial-text {
+          font-size: 16px;
+        }
+
+        .cta-button {
+          padding: 12px 30px;
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="logo">VIBE<span>FIT</span></div>
+      <button class="burger-menu" id="burger-menu">
+        <i class="fas fa-bars"></i>
+      </button>
+      <nav>
+        <ul>
+          <li>
+            <a href="{% url 'main' %}">Home</a>
+          </li>
+          <li>
+            <a href="{% url 'about' %}">About Us</a>
+          </li>
+          <li>
+            <a href="{% url 'personal_office' %}">Contact Us</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="mobile-nav" id="mobile-nav">
+        <ul>
+          <li>
+            <a href="{% url 'main' %}">Home</a>
+          </li>
+          <li>
+            <a href="{% url 'about' %}">About Us</a>
+          </li>
+          <li>
+            <a href="{% url 'personal_office' %}">Contact Us</a>
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <div class="about-container">
+      <section class="hero-section">
+        <div class="hero-content">
+          <h1 class="section-title">Your Personalized Fitness Journey</h1>
+          <p class="mission-statement">
+            VibeFit is designed to help you achieve your fitness goals with
+            customized workout and nutrition plans. Our platform adapts to your
+            progress and preferences, making it easier than ever to stay on
+            track.
+          </p>
+          <a href="{% url 'register' %}" class="btn">
+            <button class="cta-button">Start Your Journey</button>
+          </a>
+        </div>
+        <div class="hero-image">
+          <img src="{% static 'img/about.jpg' %}" alt="Person working out" />
+        </div>
+      </section>
+
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">95%</div>
+          <p>of users see progress within their first month</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">15min</div>
+          <p>workouts designed for maximum efficiency</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">2.5x</div>
+          <p>more likely to stick with personalized plans</p>
+        </div>
+      </section>
+
+      <section class="features-section">
+        <h2 class="section-title">Key Features</h2>
+        <p class="mission-statement">
+          VibeFit offers a comprehensive approach to health and fitness tailored
+          to your needs.
+        </p>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-dumbbell"></i>
+            </div>
+            <h3 class="feature-title">Personalized Workouts</h3>
+            <p>
+              Custom exercise plans based on your fitness level, goals, and
+              available equipment.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <h3 class="feature-title">Time-Efficient Workouts</h3>
+            <p>
+              Effective workouts designed to fit into your schedule, whether you
+              have 15 minutes or an hour.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-utensils"></i>
+            </div>
+            <h3 class="feature-title">Smart Nutrition Plans</h3>
+            <p>
+              Meal plans and recipes tailored to your dietary preferences and
+              fitness goals.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h3 class="feature-title">Progress Tracking</h3>
+            <p>
+              Monitor your weight, measurements, and fitness achievements with
+              easy-to-read charts.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-video"></i>
+            </div>
+            <h3 class="feature-title">Video Guides</h3>
+            <p>
+              Access to professional workout videos with proper form
+              demonstrations.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h3 class="feature-title">Mobile Friendly</h3>
+            <p>
+              Use VibeFit anywhere, anytime with our fully responsive design.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2023 VibeFit. All rights reserved.</p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const burgerMenu = document.getElementById("burger-menu");
+        const mobileNav = document.getElementById("mobile-nav");
+
+        burgerMenu.addEventListener("click", function () {
+          mobileNav.classList.toggle("active");
+
+          const icon = burgerMenu.querySelector("i");
+          if (mobileNav.classList.contains("active")) {
+            icon.classList.remove("fa-bars");
+            icon.classList.add("fa-times");
+          } else {
+            icon.classList.remove("fa-times");
+            icon.classList.add("fa-bars");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

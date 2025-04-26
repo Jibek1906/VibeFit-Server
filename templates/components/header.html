@@ -1,6 +1,12 @@
 <header class="header">
   <div class="logo">VIBE<span>FIT</span></div>
-  <nav>
+
+  <!-- Бургер-меню для мобильных -->
+  <div class="burger-menu">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <nav class="nav-menu">
     <ul>
       <li>
         <a href="{% url 'main' %}"><h2>Main</h2></a>
@@ -17,3 +23,14 @@
     </ul>
   </nav>
 </header>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const burgerMenu = document.querySelector(".burger-menu");
+    const navMenu = document.querySelector(".nav-menu");
+
+    burgerMenu.addEventListener("click", function () {
+      navMenu.classList.toggle("active");
+    });
+  });
+</script>

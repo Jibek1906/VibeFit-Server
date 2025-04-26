@@ -17,7 +17,6 @@ class FoodItemAdmin(admin.ModelAdmin):
         }),
     )
 
-# Остальные существующие модели
 @admin.register(DailyNutrition)
 class DailyNutritionAdmin(admin.ModelAdmin):
     list_display = ('user', 'date', 'calories', 'goal_calories', 'progress_percentage')

@@ -1,32 +1,116 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VibeFit</title>
     <link rel="stylesheet" href="{% static 'css/main_page.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Baloo&display=swap" rel="stylesheet">
-</head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .burger-menu {
+            display: none;
+            cursor: pointer;
+            font-size: 34px;
+            color: white;
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
 
+        .mobile-nav {
+            display: none;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background-color: #a8a48c;
+            z-index: 1000;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .mobile-nav.active {
+            display: block;
+        }
+
+        .mobile-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .mobile-nav ul li {
+            margin-bottom: 15px;
+        }
+
+        .mobile-nav ul li:last-child {
+            margin-bottom: 0;
+        }
+
+        .mobile-nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .header nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .header nav {
+                display: none;
+            }
+
+            .burger-menu {
+                display: block;
+            }
+
+            .logo {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
 <body>
     <header class="header">
         <div class="logo">VIBE<span>FIT</span></div>
+        <button class="burger-menu" id="burger-menu">
+            <i class="fas fa-bars"></i>
+        </button>
         <nav>
             <ul>
-                <li><a href="{% url 'main' %}">
-                    <h2>Home</h2>
-                </a></li>
-                <li><a href="">
-                    <h2>About Us</h2>
-                </a></li>
-                <li><a href="">
-                    <h2>Contact Us</h2>
-                </a></li>
+                <li>
+                    <a href="{% url 'main' %}">Home</a>
+                </li>
+                <li>
+                    <a href="{% url 'about' %}">About Us</a>
+                </li>
+                <li>
+                    <a href="{% url 'personal_office' %}">Contact Us</a>
+                </li>
             </ul>
         </nav>
+        <div class="mobile-nav" id="mobile-nav">
+            <ul>
+                <li>
+                    <a href="{% url 'main' %}">Home</a>
+                </li>
+                <li>
+                    <a href="{% url 'about' %}">About Us</a>
+                </li>
+                <li>
+                    <a href="{% url 'personal_office' %}">Contact Us</a>
+                </li>
+            </ul>
+        </div>
     </header>
 
     <main>
@@ -37,18 +121,40 @@
                     <h3>VibeFit helps you achieve your fitness goals with personalized workout and nutrition plans.
                         Everything you need—all in one place!</h3>
                 </p>
-                <a href="{% url 'register' %}" class="btn"><button class="cta-button">
+                <a href="{% url 'register' %}" class="btn">
+                    <button class="cta-button">
                         <h2>Start Now</h2>
-                    </button></a>
+                    </button>
+                </a>
             </div>
             <div class="hero-right">
-                <a href="{% url 'register' %}" class="btn"><img src="{% static 'img/main_page.jpg' %}"
-                        alt="Fitness"></a>
+                <a href="{% url 'register' %}" class="btn">
+                    <img src="{% static 'img/main_page.jpg' %}" alt="Fitness">
+                </a>
             </div>
         </div>
     </main>
 
     {% include 'components/footer.html' %}
-</body>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const burgerMenu = document.getElementById("burger-menu");
+            const mobileNav = document.getElementById("mobile-nav");
+
+            burgerMenu.addEventListener("click", function () {
+                mobileNav.classList.toggle("active");
+
+                const icon = burgerMenu.querySelector('i');
+                if (mobileNav.classList.contains("active")) {
+                    icon.classList.remove("fa-bars");
+                    icon.classList.add("fa-times");
+                } else {
+                    icon.classList.remove("fa-times");
+                    icon.classList.add("fa-bars");
+                }
+            });
+        });
+    </script>
+</body>
 </html>

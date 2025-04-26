@@ -7,68 +7,183 @@
     <title>Personal Office</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{% static 'css/personal_office.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&display=swap" rel="stylesheet">
     <style>
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.4);
-        justify-content: center;
+      .header {
+        height: 60px;
+        background-color: #a8a48c;
+        display: flex;
+        justify-content: space-between;
         align-items: center;
-      }
-
-      .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 500px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        border-radius: 10px;
-        animation: fadeIn 0.3s ease;
+        padding: 10px 20px;
         position: relative;
       }
 
-      .close-btn {
-        color: #aaa;
-        font-size: 28px;
+      .logo {
+        font-size: 34px;
         font-weight: bold;
-        position: absolute;
-        top: 10px;
-        right: 20px;
-        cursor: pointer;
+        color: #fff;
+        font-family: 'Baloo', cursive;
       }
 
-      .close-btn:hover,
-      .close-btn:focus {
-        color: black;
+      .logo span {
+        color: #e0decc;
+      }
+
+      .header nav ul {
+        display: flex;
+        list-style: none;
+      }
+
+      .header nav ul li {
+        margin-right: 20px;
+      }
+
+      .header nav ul li a {
+        color: #fff;
+        font-size: 18px;
         text-decoration: none;
+        font-weight: bold;
       }
 
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
+      .header nav ul li h2 {
+        margin: 0;
+        font-size: 18px;
+        color: #fff;
+        font-family: Arial, sans-serif;
+      }
+
+      .burger-menu {
+        display: none;
+        cursor: pointer;
+        font-size: 34px;
+        color: white;
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .mobile-nav {
+        display: none;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background-color: #a8a48c;
+        z-index: 1000;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .mobile-nav.active {
+        display: block;
+      }
+
+      .mobile-nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .mobile-nav ul li {
+        margin-bottom: 15px;
+      }
+
+      .mobile-nav ul li a {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .mobile-nav ul li h2 {
+        margin: 0;
+        font-size: 18px;
+        color: #fff;
+        font-family: Arial, sans-serif;
+      }
+
+      @media (max-width: 768px) {
+        .header nav {
+          display: none;
         }
-        to {
-          opacity: 1;
+
+        .burger-menu {
+          display: block;
+        }
+
+        .logo {
+          font-size: 28px;
         }
       }
 
-      .avatar-container img {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        object-fit: cover;
+      .modal-content {
+        font-size: 16px;
+        width: 90%;
+        margin: 10% auto;
+        padding: 20px;
+      }
+    
+      .modal-content h2 {
+        font-size: 18px;
+      }
+    
+      .form-group label {
+        font-size: 14px;
+      }
+    
+      .form-group input[type="number"],
+      .form-group input[type="file"],
+      .form-group select {
+        font-size: 14px;
+      }
+    
+      .save-btn {
+        font-size: 16px;
       }
     </style>
   </head>
   <body>
-    {% include 'components/header.html' %}
+    <header class="header">
+      <div class="logo">VIBE<span>FIT</span></div>
+      <button class="burger-menu" id="burger-menu">
+        <i class="fas fa-bars"></i>
+      </button>
+      <nav>
+        <ul>
+          <li>
+            <a href="{% url 'main' %}"><h2>Main</h2></a>
+          </li>
+          <li>
+            <a href="{% url 'personal_office' %}"><h2>Personal Office</h2></a>
+          </li>
+          <li>
+            <a href="{% url 'workouts' %}"><h2>Workouts</h2></a>
+          </li>
+          <li>
+            <a href="{% url 'nutrition' %}"><h2>Nutrition</h2></a>
+          </li>
+        </ul>
+      </nav>
+      <div class="mobile-nav" id="mobile-nav">
+        <ul>
+          <li>
+            <a href="{% url 'main' %}"><h2>Main</h2></a>
+          </li>
+          <li>
+            <a href="{% url 'personal_office' %}"><h2>Personal Office</h2></a>
+          </li>
+          <li>
+            <a href="{% url 'workouts' %}"><h2>Workouts</h2></a>
+          </li>
+          <li>
+            <a href="{% url 'nutrition' %}"><h2>Nutrition</h2></a>
+          </li>
+        </ul>
+      </div>
+    </header>
 
     <div class="container">
       <div class="card">
@@ -99,57 +214,30 @@
       <div class="modal-content">
         <span class="close-btn" id="closeBtn">&times;</span>
         <h2>Edit your details</h2>
-        <form
-          method="POST"
-          action="{% url 'update_user_info' user_details.user.id %}"
-          enctype="multipart/form-data"
-        >
+        <form method="POST" action="{% url 'update_user_info' user_details.user.id %}" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="form-group">
             <label for="id_height">Height (cm):</label>
-            <input
-              type="number"
-              name="height"
-              value="{{ user_details.height }}"
-              required
-            />
+            <input type="number" name="height" value="{{ user_details.height }}" required />
           </div>
           <div class="form-group">
             <label for="id_weight">Weight (kg):</label>
-            <input
-              type="number"
-              name="weight"
-              value="{{ user_details.weight }}"
-              step="0.01"
-              required
-            />
+            <input type="number" name="weight" value="{{ user_details.weight }}" step="0.01" required />
           </div>
           <div class="form-group">
             <label for="id_goal">Goal:</label>
             <select name="goal" id="id_goal" required>
-              <option value="lose-weight" {% if user_details.goal == "lose-weight" %}selected{% endif %}>
-                Lose Weight
-              </option>
-              <option value="maintain" {% if user_details.goal == "maintain" %}selected{% endif %}>
-                Maintain Weight
-              </option>
-              <option value="gain-muscle" {% if user_details.goal == "gain-muscle" %}selected{% endif %}>
-                Gain Muscle
-              </option>
+              <option value="lose-weight" {% if user_details.goal == "lose-weight" %}selected{% endif %}>Lose Weight</option>
+              <option value="maintain" {% if user_details.goal == "maintain" %}selected{% endif %}>Maintain Weight</option>
+              <option value="gain-muscle" {% if user_details.goal == "gain-muscle" %}selected{% endif %}>Gain Muscle</option>
             </select>
           </div>
           <div class="form-group">
             <label for="id_training_level">Training level:</label>
             <select name="training_level" id="id_training_level" required>
-              <option value="beginner" {% if user_details.training_level == "beginner" %}selected{% endif %}>
-                Beginner
-              </option>
-              <option value="intermediate" {% if user_details.training_level == "intermediate" %}selected{% endif %}>
-                Intermediate
-              </option>
-              <option value="advanced" {% if user_details.training_level == "advanced" %}selected{% endif %}>
-                Advanced
-              </option>
+              <option value="beginner" {% if user_details.training_level == "beginner" %}selected{% endif %}>Beginner</option>
+              <option value="intermediate" {% if user_details.training_level == "intermediate" %}selected{% endif %}>Intermediate</option>
+              <option value="advanced" {% if user_details.training_level == "advanced" %}selected{% endif %}>Advanced</option>
             </select>
           </div>
           <div class="form-group">
@@ -164,6 +252,24 @@
     {% include 'components/footer.html' %}
     
     <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const burgerMenu = document.getElementById("burger-menu");
+        const mobileNav = document.getElementById("mobile-nav");
+
+        burgerMenu.addEventListener("click", function () {
+          mobileNav.classList.toggle("active");
+
+          const icon = burgerMenu.querySelector('i');
+          if (mobileNav.classList.contains("active")) {
+            icon.classList.remove("fa-bars");
+            icon.classList.add("fa-times");
+          } else {
+            icon.classList.remove("fa-times");
+            icon.classList.add("fa-bars");
+          }
+        });
+      });
+
       const editBtn = document.getElementById('editBtn');
       const modal = document.getElementById('editModal');
       const closeBtn = document.getElementById('closeBtn');

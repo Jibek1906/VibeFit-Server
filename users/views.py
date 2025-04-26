@@ -15,6 +15,9 @@ from decimal import Decimal
 def main(request):
     return render(request, 'main.html')
 
+def about(request):
+    return render(request, 'about.html')
+
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
