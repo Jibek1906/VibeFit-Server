@@ -10,5 +10,5 @@ urlpatterns = [
     path('workouts/', include('workouts.urls')),
     path('nutrition/', include('nutrition.urls')),
     path('users/', include('users.urls')),
-    path('about/', views.about, name='about')
+    path('about/', views.about, name='about'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

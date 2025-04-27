@@ -11,6 +11,38 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <style>
+      .week-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .week-navigation h2 {
+        flex-grow: 1;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        padding: 5px 0;
+        margin: 0;
+      }
+
+      .week-navigation button {
+        background: #538558;
+        color: white;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+      }
+
+
       .header {
         height: 60px;
         background-color: #a8a48c;
@@ -215,6 +247,7 @@
       }
 
       @media (min-width: 769px) {
+
         .container {
           max-width: 1200px;
           margin: 30px auto;
@@ -229,22 +262,22 @@
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .week-navigation {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
+        .day {
           position: relative;
         }
 
-        .week-navigation h2 {
-          position: absolute;
-          left: 50%;
-          transform: translateX(-50%);
-          font-size: 18px;
-          color: #333;
-          white-space: nowrap;
+        .day::before {
+          content: attr(data-weekday);
+          display: block;
+          font-size: 10px;
+          color: #666;
+          margin-bottom: 2px;
         }
+
+        .calendar-header {
+          display: none;
+        }
+      }
 
         .week-navigation button {
           background: #538558;
@@ -276,9 +309,9 @@
           font-weight: bold;
           margin-bottom: 10px;
           padding: 10px 0;
-          background: #f8f9fa;
+          background: #d0ccb6;
           border-radius: 8px;
-          color: #555;
+          color: black;
         }
 
         .day {
@@ -342,50 +375,14 @@
           padding: 0 15px;
         }
 
-        .week-navigation {
-          position: relative;
-          padding: 40px 0 15px;
-          margin-bottom: 15px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .week-navigation h2 {
-          position: absolute;
-          top: 10px;
-          left: 0;
-          right: 0;
-          text-align: center;
-          font-size: 16px;
-          font-weight: 600;
-          color: #333;
-          padding: 5px 0;
-          margin: 0;
-        }
-
-        .week-navigation button {
-          padding: 10px 15px;
-          font-size: 14px;
-          margin-top: 15px;
-          display: flex;
-          align-items: center;
-          gap: 5px;
-          background: #538558;
-          color: white;
-          border: none;
-          border-radius: 30px;
-          cursor: pointer;
-        }
-
         .calendar-header {
           display: flex;
           justify-content: space-between;
           margin-top: 10px;
           font-size: 14px;
-          color: #555;
+          color: black;
           padding: 10px 5px;
-          background: #f8f9fa;
+          background: #d0ccb6;
           border-radius: 8px 8px 0 0;
           font-weight: bold;
         }
@@ -399,7 +396,7 @@
         }
 
         .calendar {
-          background: #f8f9fa;
+          background: #d0ccb6;
           padding: 0 5px 10px;
           border-radius: 0 0 8px 8px;
           display: grid;
@@ -529,6 +526,17 @@
       }
 
       @media (max-width: 480px) {
+
+        .week-navigation h2 {
+          flex-grow: 1;
+          text-align: center;
+          font-size: 16px;
+          font-weight: 600;
+          color: #333;
+          padding: 5px 0;
+          margin: 0;
+        }
+
         .week-navigation button {
           padding: 8px 12px;
           font-size: 13px;
@@ -554,6 +562,22 @@
           font-size: 18px;
         }
       }
+
+        @media (max-width: 768px) {
+          .week-navigation {
+            margin-bottom: 10px;
+          }
+
+          .week-navigation h2 {
+            font-size: 16px;
+            padding: 3px 0;
+          }
+
+          .week-navigation button {
+            padding: 8px 15px;
+            font-size: 14px;
+          }
+        }
     </style>
   </head>
   <body>
