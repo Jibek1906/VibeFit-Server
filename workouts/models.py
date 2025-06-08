@@ -32,3 +32,15 @@ class GeneratedWorkoutPlan(models.Model):
 
    class Meta:
        unique_together = ('user', 'date')
+       
+class VideoFeedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    video_id = models.CharField(max_length=100)
+    liked = models.BooleanField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'video_id')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.video_id} - {'Like' if self.liked else 'Dislike'}"

@@ -11,4 +11,7 @@ urlpatterns = [
     path('api/save-food/', views.api_save_food, name='api_save_food'),
     path('api/get-food/<int:food_id>/', views.api_get_food_item, name='api_get_food_item'),
     path('api/get-user-foods/', views.api_get_user_foods, name='api_get_user_foods'),
+    path('suggest-videos/', views.suggest_burn_videos, name='suggest_burn_videos'),
+    path('update-video-status/', views.update_burned_video_status, name='update_video_status'),
+
 ]

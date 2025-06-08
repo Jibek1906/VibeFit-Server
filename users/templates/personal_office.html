@@ -188,7 +188,7 @@
     <div class="container">
       <div class="card">
         <div class="avatar-container">
-          <img src="{% if user_details.avatar %}{{ user_details.avatar.url }}{% else %}{% static 'images/placeholder.png' %}{% endif %}" alt="User Avatar" />
+          <img src="{% if user_details.avatar %}{{ user_details.avatar.url }}{% else %}https://res.cloudinary.com/do4epjo9m/image/upload/v1745842509/default_avatar.png.jpg{% endif %}" alt="User Avatar" />
         </div>
         <div class="details">
           <h2 class="user">

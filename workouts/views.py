@@ -333,3 +333,4 @@ def workouts_view(request):
         'training_level': getattr(user_details, 'training_level', 'beginner')
     }
     return render(request, 'workouts.html', context)
+

@@ -11,12 +11,42 @@ from .models import UserDetails, WeightRecord
 from .forms import CustomUserCreationForm
 from django.http import JsonResponse
 from decimal import Decimal
+from django.db.models import Count
+from django.utils import timezone
+from datetime import timedelta
 
 def main(request):
     return render(request, 'main.html')
 
 def about(request):
     return render(request, 'about.html')
+
+def analytics(request):
+    total_users = User.objects.count()
+
+    today = timezone.now().date()
+    week_ago = today - timedelta(days=7)
+    new_users_last_week = User.objects.filter(date_joined__gte=week_ago).count()
+
+    recent_users = (
+        User.objects.filter(date_joined__gte=today - timedelta(days=14))
+        .extra({'day': "date(date_joined)"})
+        .values('day')
+        .annotate(count=Count('id'))
+        .order_by('day')
+    )
+    days = [entry['day'].strftime('%Y-%m-%d') for entry in recent_users]
+    counts = [entry['count'] for entry in recent_users]
+
+    latest_users = User.objects.order_by('-date_joined')[:5]
+
+    return render(request, 'analytics.html', {
+        'total_users': total_users,
+        'new_users_last_week': new_users_last_week,
+        'days': days,
+        'counts': counts,
+        'latest_users': latest_users,
+    })
 
 def register(request):
     if request.method == 'POST':

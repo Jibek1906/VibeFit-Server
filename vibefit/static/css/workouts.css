@@ -74,28 +74,6 @@ h2 {
     padding: 20px;
 }
 
-.week-navigation {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.week-navigation button {
-    padding: 10px 20px;
-    background: #538558;
-    font-size: 1em;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-}
-
-.calendar {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-}
-
 .day {
     padding: 10px;
     background: #e9ecef;

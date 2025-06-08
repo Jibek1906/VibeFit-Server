@@ -11,4 +11,7 @@ urlpatterns = [
     path('nutrition/', include('nutrition.urls')),
     path('users/', include('users.urls')),
     path('about/', views.about, name='about'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

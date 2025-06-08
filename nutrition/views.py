@@ -4,16 +4,12 @@ from django.http import JsonResponse
 from datetime import datetime, timedelta
 from .models import DailyNutrition, Meal
 from users.models import UserDetails
-import json
-from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 from .models import FoodItem
-import json
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
-from .models import FoodItem
 import json
+from .ai_module import get_burn_videos
 
 def calculate_daily_calories(user_details):
     age = (datetime.now().date() - user_details.birth_date).days // 365 if user_details.birth_date else 30
@@ -459,3 +455,109 @@ def api_get_user_foods(request):
             return JsonResponse({'status': 'error', 'error': str(e)}, status=400)
     return JsonResponse({'status': 'error', 'error': 'Invalid method'}, status=405)
 
+
+from .models import DailyNutrition, BurnedCaloriesVideo
+from users.models import UserDetails
+from django.http import JsonResponse
+from datetime import datetime
+from .ai_module import get_burn_videos  # ensure this is correctly imported
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def suggest_burn_videos(request):
+    user_details = UserDetails.objects.get(user=request.user)
+    today = datetime.now().date()
+
+    try:
+        nutrition = DailyNutrition.objects.get(user=user_details, date=today)
+    except DailyNutrition.DoesNotExist:
+        return JsonResponse({'status': 'no_data'})
+
+    excess = nutrition.calories - nutrition.goal_calories
+    if excess <= 0:
+        return JsonResponse({'status': 'ok', 'excess': 0, 'videos': []})
+
+    # Check if there are any skipped videos for today
+    existing_videos = BurnedCaloriesVideo.objects.filter(
+        user=user_details, 
+        date=today,
+        status='skip'
+    )
+    
+    videos_to_return = []
+    
+    if existing_videos.exists():
+        for v in existing_videos:
+            videos_to_return.append({
+                'video_id': v.video_id,
+                'title': v.title,
+                'calories': v.calories_burned,
+                'embed_url': f"https://www.youtube.com/embed/{v.video_id}",
+                'status': v.status,
+                'thumbnail': f"https://img.youtube.com/vi/{v.video_id}/hqdefault.jpg"
+            })
+    else:
+        suggested_videos = get_burn_videos(calories_needed=excess, user_details=user_details)
+
+        for video in suggested_videos:
+            try:
+                video_id = video['video_id']
+                title = video['title']
+                calories = video['calories']
+                embed_url = video.get('embed_url', f"https://www.youtube.com/embed/{video_id}")
+                thumbnail = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
+            except KeyError:
+                continue
+
+            BurnedCaloriesVideo.objects.create(
+                user=user_details,
+                date=today,
+                video_id=video_id,
+                title=title,
+                calories_burned=calories,
+                status='skip'  # Default to skip until user marks as done
+            )
+            videos_to_return.append({
+                'video_id': video_id,
+                'title': title,
+                'calories': calories,
+                'embed_url': embed_url,
+                'status': 'skip',
+                'thumbnail': thumbnail
+            })
+
+    return JsonResponse({
+        'status': 'ok',
+        'excess': excess,
+        'videos': videos_to_return
+    })
+
+@csrf_exempt
+@login_required
+def update_burned_video_status(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        video_id = data.get('video_id')
+        status = data.get('status')
+
+        user_details = UserDetails.objects.get(user=request.user)
+        today = datetime.now().date()
+
+        try:
+            video = BurnedCaloriesVideo.objects.get(
+                user=user_details, 
+                date=today, 
+                video_id=video_id
+            )
+            video.status = status
+            video.save()
+
+            if status == 'done':
+                nutrition = DailyNutrition.objects.get(user=user_details, date=today)
+                nutrition.burned_extra_calories += video.calories_burned
+                nutrition.save()
+
+            return JsonResponse({'status': 'ok'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'error': str(e)}, status=400)
+    return JsonResponse({'status': 'error', 'error': 'Invalid method'}, status=405)

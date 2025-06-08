@@ -25,6 +25,7 @@ class DailyNutrition(models.Model):
     goal_proteins = models.PositiveIntegerField(default=0)
     goal_fats = models.PositiveIntegerField(default=0)
     goal_carbs = models.PositiveIntegerField(default=0)
+    burned_extra_calories = models.PositiveIntegerField(default=0)
     water_intake = models.PositiveIntegerField(
         default=0,
         validators=[MinValueValidator(0)],
@@ -39,6 +40,11 @@ class DailyNutrition(models.Model):
 
     def __str__(self):
         return f"{self.user.user.username} - {self.date} - {self.calories}/{self.goal_calories}"
+    
+    @property
+    def net_calories(self):
+        return self.calories - self.burned_extra_calories
+
 
     @property
     def remaining_calories(self):
@@ -97,3 +103,14 @@ class Meal(models.Model):
 
     class Meta:
         ordering = ['created_at']
+        
+class BurnedCaloriesVideo(models.Model):
+    user = models.ForeignKey(UserDetails, on_delete=models.CASCADE)
+    date = models.DateField()
+    video_id = models.CharField(max_length=50)
+    title = models.CharField(max_length=200)
+    calories_burned = models.PositiveIntegerField()
+    status = models.CharField(max_length=10, choices=[('done', 'Done'), ('skip', 'Skip')], default='skip')
+
+    class Meta:
+        unique_together = ('user', 'date', 'video_id')

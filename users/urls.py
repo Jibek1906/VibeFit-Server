@@ -10,4 +10,5 @@ urlpatterns = [
     path('personal_office/', views.personal_office, name='personal_office'),
     path('update_user_info/<int:user_id>/', views.update_user_details, name='update_user_info'),
     path('check-email/', views.check_email, name='check_email'),
+    path('analytics/', views.analytics, name='analytics'),
 ]

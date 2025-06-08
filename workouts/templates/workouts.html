@@ -11,6 +11,11 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <style>
+      h3 {
+        margin-bottom: 15px;
+        font-size: 18px;
+      }
+
       .week-navigation {
         display: flex;
         justify-content: space-between;
@@ -28,20 +33,6 @@
         padding: 5px 0;
         margin: 0;
       }
-
-      .week-navigation button {
-        background: #538558;
-        color: white;
-        border: none;
-        padding: 10px 25px;
-        border-radius: 30px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        z-index: 1;
-      }
-
 
       .header {
         height: 60px;
@@ -219,7 +210,7 @@
       }
 
       .workout-details {
-        background: #f8f9fa;
+        background: #dbdacc;
         padding: 20px;
         border-radius: 8px;
         margin-top: 20px;
@@ -292,12 +283,16 @@
           z-index: 1;
         }
 
+        .week-navigation button:hover {
+          background: #3a6a3d;
+        }
+
         .calendar {
           display: grid;
           grid-template-columns: repeat(7, 1fr);
           gap: 10px;
           margin-bottom: 20px;
-          background: #f8f9fa;
+          background: #eae9e5;
           padding: 10px;
           border-radius: 8px;
         }

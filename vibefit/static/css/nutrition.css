@@ -38,7 +38,6 @@ body {
     font-family: 'Arial', sans-serif;
  }
  
- 
  .header {
     background-color: #a8a48c;
     display: flex;
@@ -47,7 +46,7 @@ body {
     padding: 0px 20px;
     box-sizing: border-box;
  }
- 
+
  
  .header .logo {
     font-size: 34px;
@@ -86,41 +85,6 @@ body {
     gap: 20px;
  }
  
- 
- .calendar {
-    flex: 3;
-    background-color: rgba(240, 240, 232);
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
- }
- 
- 
- .calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
- }
- 
- 
- .calendar-header button {
-    background-color: #538558;
-    border: none;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 30px;
-    cursor: pointer;
- }
- 
- 
- .calendar-header h2 {
-    margin: 0;
-    font-size: 1.5em;
-    color: #333;
- }
- 
- 
  .date-cell {
     text-align: center;
     padding: 10px;
@@ -131,37 +95,6 @@ body {
     font-weight: bold;
     color: #333;
  }
- 
- 
- table {
-    width: 100%;
-    border-collapse: collapse;
- }
- 
- 
- th, td {
-    padding: 25px;
-    text-align: left;
-    border-bottom: 1px solid #ccc;
-    background-color: #fff;
- }
- 
- 
- th {
-    background-color: #D9D9C3;
-    color: #333;
- }
- 
- 
- .summary {
-    flex: 1;
-    background-color: rgba(240, 240, 232);
-    border-radius: 30px;
-    padding: 20px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-    height: 100%;
- }
- 
  
  .summary h2 {
     font-size: 1.5em;
@@ -238,16 +171,4 @@ body {
     font-size: 1em;
     border: 1px solid #ccc;
     border-radius: 5px;
- }
- 
- 
- button {
-    background-color: #538558;
-    border: none;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    cursor: pointer;
-    font-size: 1em;
  }

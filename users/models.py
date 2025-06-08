@@ -56,7 +56,11 @@ class UserProfile(models.Model):
         ('Int ermediate', 'Intermediate'),
         ('Advanced', 'Advanced')
     ], default='Beginner')
-    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    avatar = models.ImageField(
+    upload_to='avatars/', 
+    default='https://res.cloudinary.com/do4epjo9m/image/upload/v1745842509/default_avatar.png.jpg', 
+    blank=True, 
+    null=True)
 
     def __str__(self):
         return self.user.username
